@@ -1,3 +1,4 @@
+// TODO Add license
 package io.github.redpanda4552.PandaBot;
 
 import java.io.BufferedReader;
@@ -42,6 +43,7 @@ public class Main {
                         FileUtils.copyURLToFile(getClass().getResource("pandabot.cfg"), configFile);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return;
                     }
                 }
                 
@@ -73,6 +75,7 @@ public class Main {
                     reader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
             }
         }
