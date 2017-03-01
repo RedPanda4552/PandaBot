@@ -13,4 +13,4 @@ If you want to use PandaBot on your Discord server, there will be some setup to 
 
 ##Installation and Operation##
 PandaBot binaries are available on the [Releases seciton of this repository] (https://github.com/RedPanda4552/PandaBot/releases). These jar files are shaded and have dependencies internalized. The directory you place it at does not matter.
-To run PandaBot, execute the following in a command shell: **java -jar <pandabot jar name>**
+To run PandaBot, execute the following in a command shell, replacing "x.y.z" with the version found in the jar's name: **java -jar PandaBot-x.y.z.jar**
