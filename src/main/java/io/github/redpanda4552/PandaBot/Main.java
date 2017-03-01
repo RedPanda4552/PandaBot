@@ -62,7 +62,7 @@ public class Main {
                 
                 if (!configFile.exists()) {
                     try {
-                        FileUtils.copyURLToFile(getClass().getResource("pandabot.cfg"), configFile);
+                        FileUtils.copyURLToFile(getClass().getResource("/pandabot.cfg"), configFile);
                     } catch (IOException e) {
                         e.printStackTrace();
                         return;
@@ -74,11 +74,15 @@ public class Main {
                     String str = "";
                     String[] strArr = null;
                     
+                    // If a config line isn't filled out but has a space at the
+                    // end, it will be split around the : and have white space
+                    // as the 2nd array element. The trim here will stop this.
                     while ((str = reader.readLine()) != null) {
                         if (str.startsWith("//")) {
                             continue;
                         }
                         
+                        str = str.trim();
                         strArr = str.split(":");
                         
                         if (strArr.length == 2) {
