@@ -1,0 +1,6 @@
+target/
+
+JDA-*
+.settings/
+.project
+.classpath
