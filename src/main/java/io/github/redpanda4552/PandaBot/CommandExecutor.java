@@ -87,6 +87,7 @@ public class CommandExecutor {
         
         if (text.startsWith("/")) {
             String[] args = text.split(" ");
+            args[0] = args[0].toLowerCase();
             AbstractCommand command = getCommand(args[0]);
             
             if (command == null) {
