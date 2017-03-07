@@ -37,6 +37,7 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     public void execute(User sender, Message message, MessageChannel channel, VoiceChannel voiceChannel, String[] args) {
+        pandaBot.queueDeleteMessage(message);
         pandaBot.queueSendMessage("PandaBot is reloading...", channel);
         pandaBot.queueStop(channel);
         pandaBot.queueReload();
