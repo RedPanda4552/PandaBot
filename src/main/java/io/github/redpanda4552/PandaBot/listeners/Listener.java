@@ -66,7 +66,7 @@ public class Listener extends ListenerAdapter {
     
     @Override
     public void onShutdown(ShutdownEvent event) {
-        PandaBot.waitingForShutdown = false;
         pandaBot.addToHistory("JDA shutdown completed.", Level.INFO);
+        PandaBot.waitingForShutdown = false;
     }
 }
