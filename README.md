@@ -12,7 +12,8 @@ If you want to use PandaBot on your Discord server, there will be some setup to 
 * You will need your Discord server's Guild ID. This is fairly easy to get if you use Discord in a web browser, as it shows up in the address bar of your web browser.
 
 ## Installation and Operation ##
-PandaBot binaries are available on the [Releases seciton of this repository](https://github.com/RedPanda4552/PandaBot/releases). These jar files are shaded and have dependencies internalized. The directory you place it at does not matter.
+PandaBot binaries are available on the [Releases seciton of this repository](https://github.com/RedPanda4552/PandaBot/releases). These jar files are shaded and have dependencies internalized. The directory you place it at should have write permissions, as PandaBot will need to write to the config file at first launch, and running with elevated permissions is discouraged with pretty much everything these days.
+
 To run PandaBot, execute the following in a command shell, replacing "x.y.z" with the version found in the jar's name: **java -jar PandaBot-x.y.z.jar**
 
 ## Configuration ##
