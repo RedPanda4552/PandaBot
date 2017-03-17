@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.redpanda4552.PandaBot</groupId>
   <artifactId>PandaBot</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -128,10 +128,16 @@
     </dependency>
     
     <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.19-SNAPSHOT</version>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-configuration2</artifactId>
+		  <version>2.1.1</version>
     </dependency>
+    
+    <dependency>
+		  <groupId>commons-beanutils</groupId>
+		  <artifactId>commons-beanutils</artifactId>
+		  <version>1.9.3</version>
+		</dependency>
   </dependencies>
   
 </project>
