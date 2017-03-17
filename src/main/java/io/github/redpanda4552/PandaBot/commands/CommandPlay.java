@@ -39,7 +39,12 @@ public class CommandPlay extends AbstractCommand {
     public void execute(User sender, Message message, MessageChannel channel, VoiceChannel voiceChannel, String[] args) {
         pandaBot.queueDeleteMessage(message);
         pandaBot.queueVoiceChannelConnect(voiceChannel);
-        pandaBot.queuePlay(sender, channel, message, args[0]);
+        
+        if (args.length > 0) {
+            pandaBot.queuePlay(sender, channel, message, args[0]);
+        } else {
+            pandaBot.queuePlay(sender, channel, message, "");
+        }
     }
 
 }
