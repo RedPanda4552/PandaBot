@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.redpanda4552.PandaBot</groupId>
   <artifactId>PandaBot</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <build>
     <plugins>
       <plugin>
@@ -64,6 +64,11 @@
       <id>jcenter</id>
       <name>jcenter-bintray</name>
       <url>http://jcenter.bintray.com</url>
+    </repository>
+    <repository>
+      <id>Sonatype-public</id>
+      <name>SnakeYAML repository</name>
+      <url>http://oss.sonatype.org/content/groups/public/</url>
     </repository>
   </repositories>
   <properties>
