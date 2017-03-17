@@ -120,7 +120,7 @@ public class YoutubeVideo {
         try {
             JSONObject json = Unirest.get("https://www.googleapis.com/youtube/v3/channels?part=snippet&fields=items(snippet/thumbnails)")
                     .queryString("id", channelId)
-                    .queryString("key", Main.youtubeAPIKey)
+                    .queryString("key", Main.config.get("youtube-api-key"))
                     .asJson()
                     .getBody()
                     .getObject();

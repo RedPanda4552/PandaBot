@@ -222,8 +222,8 @@ public class PandaBot {
                     addToHistory(elem.toString(), Level.WARNING);
                 }
                 
-                queuePrivateMessage(getJDA().getUserById(Main.getOperatorId()), "An exception was caught by the catch-all in PandaBot's main thread. Logdump is below.");
-                queueLogDump(getJDA().getUserById(Main.getOperatorId()), null, -1);
+                queuePrivateMessage(getJDA().getUserById(Main.config.get("operator-id")), "An exception was caught by the catch-all in PandaBot's main thread. Logdump is below.");
+                queueLogDump(getJDA().getUserById(Main.config.get("operator-id")), null, -1);
             }
         }
         

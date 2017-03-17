@@ -85,11 +85,11 @@ public class TextUtils {
         if (invoker != null) {
             builder.append(invoker);
             String filtered = " an error occured :anger: ```java\n" + e.toString() + "\n";
-            filtered = filtered.replace(Main.youtubeAPIKey, "Youtube_API_Key");
+            filtered = filtered.replace(Main.config.get("youtube-api-key"), "Youtube_API_Key");
             builder.append(filtered);
         } else {
             String filtered = "An error occured :anger: ```java\n" + e.toString() + "\n";
-            filtered = filtered.replace(Main.youtubeAPIKey, "Youtube_API_Key");
+            filtered = filtered.replace(Main.config.get("youtube-api-key"), "Youtube_API_Key");
             builder.append(filtered);
         }
 

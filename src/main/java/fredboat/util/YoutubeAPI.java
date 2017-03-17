@@ -44,7 +44,7 @@ public class YoutubeAPI {
         try {
             data = Unirest.get("https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&regionCode=US&fields=items(id/videoId)")
                     .queryString("q", URLEncoder.encode(query, "UTF-8"))
-                    .queryString("key", Main.youtubeAPIKey)
+                    .queryString("key", Main.config.get("youtube-api-key"))
                     .asJson()
                     .getBody()
                     .getObject();
@@ -70,7 +70,7 @@ public class YoutubeAPI {
         try {
             data = Unirest.get("https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&fields=items(id,snippet/title,contentDetails/duration)")
                     .queryString("id", id)
-                    .queryString("key", Main.youtubeAPIKey)
+                    .queryString("key", Main.config.get("youtube-api-key"))
                     .asJson()
                     .getBody()
                     .getObject();
@@ -95,7 +95,7 @@ public class YoutubeAPI {
             try {
                 data = Unirest.get("https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet")
                         .queryString("id", id)
-                        .queryString("key", Main.youtubeAPIKey)
+                        .queryString("key", Main.config.get("youtube-api-key"))
                         .asJson()
                         .getBody()
                         .getObject();

@@ -59,8 +59,8 @@ public class Listener extends ListenerAdapter {
                 pandaBot.addToHistory(elem.toString(), Level.WARNING);
             }
             
-            pandaBot.queuePrivateMessage(PandaBot.getJDA().getUserById(Main.getOperatorId()), "An exception was caught by the catch-all in PandaBot's Listener. Logdump is below.");
-            pandaBot.queueLogDump(PandaBot.getJDA().getUserById(Main.getOperatorId()), -1);
+            pandaBot.queuePrivateMessage(PandaBot.getJDA().getUserById(Main.config.get("operator-id")), "An exception was caught by the catch-all in PandaBot's Listener. Logdump is below.");
+            pandaBot.queueLogDump(PandaBot.getJDA().getUserById(Main.config.get("operator-id")), -1);
         }
     }
     

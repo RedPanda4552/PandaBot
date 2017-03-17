@@ -23,25 +23,17 @@
  */
 package io.github.redpanda4552.PandaBot;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
-
+import io.github.redpanda4552.PandaBot.util.Configuration;
 import io.github.redpanda4552.PandaBot.util.LogFormatter;
 
 public class Main {
 
     public static final Logger log = Logger.getLogger(PandaBot.class.getName());
-    private static String operatorId;
-    public static String youtubeAPIKey;
-    
-    private static String discordToken;
-    private static String guildId;
+    public static Configuration config;
     
     public static void main(String[] args) {
         log.setUseParentHandlers(false);
@@ -50,77 +42,27 @@ public class Main {
         consoleHandler.setFormatter(logFormatter);
         log.addHandler(consoleHandler);
         log.info("Logger formatting set up");
-        
-        // Making this a class because otherwise getClass() causes problems
-        class ConfigLoader {
-            public ConfigLoader(File file) {
-                File configFile = new File("pandabot.cfg");
-                
-                if (file != null) {
-                    configFile = file;
-                }
-                
-                if (!configFile.exists()) {
-                    try {
-                        FileUtils.copyURLToFile(getClass().getResource("/pandabot.cfg"), configFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-                }
-                
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(configFile));
-                    String str = "";
-                    String[] strArr = null;
-                    
-                    // If a config line isn't filled out but has a space at the
-                    // end, it will be split around the : and have white space
-                    // as the 2nd array element. The trim here will stop this.
-                    while ((str = reader.readLine()) != null) {
-                        if (str.startsWith("//")) {
-                            continue;
-                        }
-                        
-                        str = str.trim();
-                        strArr = str.split(":");
-                        
-                        if (strArr.length == 2) {
-                            if (strArr[0].equals("operatorId")) {
-                                operatorId = strArr[1].trim();
-                            } else if (strArr[0].equals("youtubeAPIKey")) {
-                                youtubeAPIKey = strArr[1].trim();
-                            } else if (strArr[0].equals("discordToken")) {
-                                discordToken = strArr[1].trim();
-                            } else if (strArr[0].equals("guildId")) {
-                                guildId = strArr[1].trim();
-                            }
-                        }
-                    }
-                    
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-            }
-        }
-        
-        File file = null;
+        String altConfigPath = null;
         
         if (args.length >= 1) {
-            file = new File(args[0]);
+            File file = new File(args[0]);
             
-            if (!file.exists()) {
-                file = null;
+            if (file.exists() && args[0].toLowerCase().endsWith(".xml")) {
+                altConfigPath = args[0];
             }
         }
         
-        new ConfigLoader(file);
+        config = new Configuration(altConfigPath != null ? altConfigPath : null);
         
-        if (discordToken == null || youtubeAPIKey == null || guildId == null) {
-            log.warning("The file \"pandabot.cfg\" has been dropped in the same folder as the PandaBot jar.");
-            log.warning("To run PandaBot, this file needs to be filled out.");
+        if (!config.isReady()) {
+            log.warning("Something went wrong trying to set up the configuration! See the above stack trace for details.");
+            return;
+        }
+        
+        if (!config.isComplete()) {
+            log.warning("The file \"pandabot.xml\" has been dropped in the same folder as the PandaBot jar.");
+            log.warning("To run PandaBot, this file needs to be filled out. Documentation is available at: ");
+            log.warning("https://github.com/RedPanda4552/PandaBot#configuration");
             return;
         }
         
@@ -128,16 +70,8 @@ public class Main {
         PandaBot.waitingForShutdown = true;
         
         while (true) {
-            new PandaBot(discordToken, guildId);
+            new PandaBot(config.get("discord-token"), config.get("guild-id"));
         }
-    }
-    
-    public static String getOperatorId() {
-        return operatorId;
-    }
-    
-    public static String getYoutubeAPIKey() {
-        return youtubeAPIKey;
     }
 }
 
