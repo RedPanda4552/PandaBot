@@ -25,20 +25,15 @@
 
 package fredboat;
 
-import fredboat.util.DistributionEnum;
-
 public abstract class FredBoat {
 
-    public static DistributionEnum distribution = DistributionEnum.DEVELOPMENT;
-
     private static String[] lavaplayerNodes = new String[64];
-    private static boolean lavaplayerNodesEnabled = false;
 
     public static String[] getLavaplayerNodes() {
         return lavaplayerNodes;
     }
 
     public static boolean isLavaplayerNodesEnabled() {
-        return lavaplayerNodesEnabled;
+        return false;
     }
 }

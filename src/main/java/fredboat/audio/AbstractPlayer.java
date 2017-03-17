@@ -39,11 +39,9 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-import fredboat.FredBoat;
 import fredboat.audio.queue.AudioTrackContext;
 import fredboat.audio.queue.ITrackProvider;
 import fredboat.audio.source.PlaylistImportSourceManager;
-import fredboat.util.DistributionEnum;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 import org.slf4j.LoggerFactory;
 
@@ -71,15 +69,9 @@ public abstract class AbstractPlayer extends AudioEventAdapter implements AudioS
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
             registerSourceManagers(playerManager);
-
-            //Patrons get higher quality
-            AudioConfiguration.ResamplingQuality quality = FredBoat.distribution == DistributionEnum.PATRON ? AudioConfiguration.ResamplingQuality.HIGH : AudioConfiguration.ResamplingQuality.LOW;
+            AudioConfiguration.ResamplingQuality quality = AudioConfiguration.ResamplingQuality.HIGH;
             playerManager.getConfiguration().setResamplingQuality(quality);
             playerManager.enableGcMonitoring();
-
-            if (FredBoat.distribution != DistributionEnum.PATRON && FredBoat.distribution != DistributionEnum.DEVELOPMENT && FredBoat.isLavaplayerNodesEnabled()) {
-                playerManager.useRemoteNodes(FredBoat.getLavaplayerNodes());
-            }
         }
     }
 
