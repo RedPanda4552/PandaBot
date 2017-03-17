@@ -1,4 +1,4 @@
-#PandaBot - Discord Bot#
+# PandaBot - Discord Bot # 
 
 ##What it Does##
 PandaBot's only current function is to play music. PandaBot uses a slightly modified variant of the music player in [Frederikam's Fredboat Bot for Discord] (https://github.com/Frederikam/FredBoat).
