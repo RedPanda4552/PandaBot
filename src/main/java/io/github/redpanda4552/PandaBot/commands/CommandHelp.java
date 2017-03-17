@@ -44,7 +44,8 @@ public class CommandHelp extends AbstractCommand {
             "> /leave - Remove PandaBot from it's current channel." + "\n" +
             "> /nowplaying - Show what is currently playing, if anything." + "\n" + 
             "> /reload - Stops JDA, sends the current PandaBot to the GC and starts a new instance. May help if the player is struggling." + "\n" +
-            "> /logdump <n | all> <public> - Dump n or all log entries to your DMs or the public channel. You cannot dump more than 20 logs to the public channel." + "\n" + 
+            "> /logdump <n | all> <public> - Dump n or all log entries to your DMs or the public channel. You cannot dump more than 20 logs to the public channel." + "\n" +
+            "> /nsfw <text> - Masks a link to an image, video, etc. so that only text shows, no image preview. Good for NSFW material or spoilers." + "\n" +
             "```"
     ;
     
