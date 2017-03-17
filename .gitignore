@@ -1,6 +1,6 @@
 target/
-
 JDA-*
 .settings/
 .project
 .classpath
+pandabot.xml
