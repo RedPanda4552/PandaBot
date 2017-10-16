@@ -28,22 +28,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
-import io.github.redpanda4552.PandaBot.commands.AbstractCommand.CommandType;
-import io.github.redpanda4552.PandaBot.commands.CommandReload;
-import io.github.redpanda4552.PandaBot.commands.general.CommandEcho;
-import io.github.redpanda4552.PandaBot.commands.general.CommandHelp;
-import io.github.redpanda4552.PandaBot.commands.general.CommandLmgtfy;
-import io.github.redpanda4552.PandaBot.commands.general.CommandNSFW;
-import io.github.redpanda4552.PandaBot.commands.general.CommandPing;
-import io.github.redpanda4552.PandaBot.commands.music.CommandJoin;
-import io.github.redpanda4552.PandaBot.commands.music.CommandLeave;
-import io.github.redpanda4552.PandaBot.commands.music.CommandNowplaying;
-import io.github.redpanda4552.PandaBot.commands.music.CommandPause;
-import io.github.redpanda4552.PandaBot.commands.music.CommandPlay;
-import io.github.redpanda4552.PandaBot.commands.music.CommandQueue;
-import io.github.redpanda4552.PandaBot.commands.music.CommandSkip;
-import io.github.redpanda4552.PandaBot.commands.music.CommandStop;
+import io.github.redpanda4552.PandaBot.commands.*;
+import io.github.redpanda4552.PandaBot.commands.general.*;
+import io.github.redpanda4552.PandaBot.commands.music.*;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
