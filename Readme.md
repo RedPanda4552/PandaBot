@@ -1,4 +1,4 @@
-# PandaBot
+# PandaBot - Discord Bot
 A proper readme (probably) coming soon. Until then, crappy abridged readme.
 
 Compile the jar with Maven (Use the Install goal). Use the bigger one (it has dependencies internalized, the barebones one won't run).
