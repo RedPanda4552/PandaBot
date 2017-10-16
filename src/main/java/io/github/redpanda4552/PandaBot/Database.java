@@ -36,6 +36,8 @@ import java.sql.SQLException;
  * Adapted from SQL Driver provided by Husky on the Bukkit Forums</a>.<br>
  * @author -_Husky_-
  * @author tips48
+ * 
+ * <b>This is excluded from build path!</b>
  */
 public class Database {
     
