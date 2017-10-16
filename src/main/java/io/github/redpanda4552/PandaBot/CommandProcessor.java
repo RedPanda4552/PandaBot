@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 
 import io.github.redpanda4552.PandaBot.commands.*;
+import io.github.redpanda4552.PandaBot.commands.AbstractCommand.CommandType;
 import io.github.redpanda4552.PandaBot.commands.general.*;
 import io.github.redpanda4552.PandaBot.commands.music.*;
 import net.dv8tion.jda.core.entities.Guild;
