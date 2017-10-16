@@ -1,0 +1,7 @@
+target/
+JDA-*
+.settings/
+.project
+.classpath
+pandabot.xml
+dependency-reduced-pom.xml
