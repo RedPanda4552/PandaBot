@@ -1,4 +1,7 @@
 # PandaBot - Discord Bot
+[![Build status](https://ci.appveyor.com/api/projects/status/x8fgdoh7qimanjww/branch/master?svg=true)](https://ci.appveyor.com/project/RedPanda4552/pandabot/branch/master)
+
+
 A proper readme (probably) coming soon. Until then, crappy abridged readme.
 
 Compile the jar with Maven (Use the Install goal). Use the bigger one (it has dependencies internalized, the barebones one won't run).
