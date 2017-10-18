@@ -56,7 +56,7 @@ public class CommandPlay extends AbstractCommand {
         ytasm = new YoutubeAudioSourceManager();
     }
 
-    @Override // TODO Why are underscores making URLs invalid? Not necessarily this class but, string filtering needed?
+    @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
         VoiceChannel vc = member.getVoiceState().getChannel();
         
