@@ -31,6 +31,9 @@ import io.github.redpanda4552.PandaBot.util.LogFormatter;
 public class Main {
 
     private static final Logger log = Logger.getLogger(PandaBot.class.getName());
+    private static String discordToken, youtubeAPIKey, superuserId;
+    
+    protected static PandaBot pandaBot;
     
     public static void main(String[] args) {
         log.setUseParentHandlers(false);
@@ -45,7 +48,13 @@ public class Main {
             return;
         }
         
-        while (true)
-            new PandaBot(log, args[0], args[1], args[2]);
+        discordToken = args[0];
+        youtubeAPIKey = args[1];
+        superuserId = args[2];
+        reinstance();
+    }
+    
+    protected static void reinstance() {
+        pandaBot = new PandaBot(log, discordToken, youtubeAPIKey, superuserId);
     }
 }

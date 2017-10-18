@@ -49,7 +49,6 @@ public class PandaBot {
     private final Logger log;
     private final String superuserId;
     
-    private boolean running = true;
     private JDA jda;
     private CommandProcessor commandProcessor;
     private GlobalAudioController gac;
@@ -59,17 +58,6 @@ public class PandaBot {
         this.log = log;
         this.superuserId = superuserId;
         init(token, youtubeApiKey);
-        
-        // This loop keeps the core PandaBot thread alive. JDA and LavaPlayer
-        // threads do all the work; killing this loop causes Main to generate a
-        // new PandaBot instance.
-        while (running) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                logWarning(e.getMessage(), e.getStackTrace());
-            }
-        }
     }
     
     /**
@@ -115,7 +103,7 @@ public class PandaBot {
         st.dropAll();
         getGlobalAudioController().killAll();
         jda.shutdown();
-        running = false;
+        Main.reinstance();
     }
     
     /**
