@@ -1,14 +1,17 @@
 version: '{build}'
 
 build_script:
-  - ps: $env:POM_ARTIFACT = ([xml](Get-Content .\pom.xml)).project.artifactId
-  - ps: $env:POM_VERSION = ([xml](Get-Content .\pom.xml)).project.version
-  - ps: Update-AppveyorBuild -Version "$env:POM_VERSION.$env:APPVEYOR_BUILD_NUMBER"
   - mvn clean install
 test_script:
 #  - mvn clean install --batch-mode
+after_build:
+  - ps: $env:pom_artifactId = ([xml](Get-Content .\pom.xml)).project.artifactId
+  - ps: $env:pom_version = ([xml](Get-Content .\pom.xml)).project.version
+  - ps: $env:versionStr = "$env:pom_version-$env:APPVEYOR_BUILD_NUMBER"
+  - ps: Update-AppveyorBuild -Version "$env:versionStr"
+  - set fileName=%pom_artifactId%-%versionStr%.jar
 cache:
   - C:\Users\appveyor\.m2
 artifacts:
-  - path: .\target\$env:POM_ARTIFACT-$env:POM_VERSION.jar
-    name: $env:POM_ARTIFACT-$env:POM_VERSION.jar
+  - path: .\target\$(fileName)
+    name: $(fileName)
