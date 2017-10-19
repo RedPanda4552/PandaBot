@@ -87,7 +87,7 @@ public class CommandProcessor {
         
         if (commandMap.containsKey(commandStr)) {
             AbstractCommand ac = commandMap.get(commandStr);
-            boolean hasPermission = ac.getCommandType() == CommandType.SUPER ? pandaBot.memberIsSuperuser(member) : pandaBot.memberHasPermission(member, commandStr);
+            boolean hasPermission = pandaBot.userHasPermission(member, ac.getCommandType() == CommandType.SUPER ? "super" : commandStr);
             
             if (hasPermission) {
                 message.delete().complete();
