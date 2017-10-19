@@ -1,4 +1,4 @@
-version: {build}-{branch}
+version: {build}
 
 init:
   - ps: $env:POM_ARTIFACT = ([xml](Get-Content .\pom.xml)).project.artifactId
