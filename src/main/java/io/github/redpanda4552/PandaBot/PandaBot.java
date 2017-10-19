@@ -46,6 +46,7 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class PandaBot {
 
+    private final long startTime;
     private final Logger log;
     private final String superuserId;
     
@@ -55,6 +56,7 @@ public class PandaBot {
     private SelectionTracker st;
     
     public PandaBot(Logger log, String token, String youtubeApiKey, String superuserId) {
+        startTime = System.currentTimeMillis();
         this.log = log;
         this.superuserId = superuserId;
         init(token, youtubeApiKey);
@@ -141,14 +143,18 @@ public class PandaBot {
     }
     
     /**
-     * Check if a user has permission for a command. Currently only for
-     * superuser commands.
+     * Check if a member is the superuser.
      */
-    public boolean userHasPermission(Member member, String perm) {
-        if (perm.equalsIgnoreCase("super")) {
-            return member.getUser().getId().equalsIgnoreCase(superuserId);
+    public boolean memberIsSuperuser(Member member) {
+        return member.getUser().getId().equalsIgnoreCase(superuserId);
+    }
+    
+    public boolean memberHasPermission(Member member, String permission) {
+        if (memberIsSuperuser(member)) {
+            return true;
         }
         
+        // Not implemented!
         return true;
     }
     
@@ -202,6 +208,18 @@ public class PandaBot {
      */
     public String getBotId() {
         return jda.getSelfUser().getId();
+    }
+    
+    public long getRunningTime() {
+        return System.currentTimeMillis() - startTime;
+    }
+    
+    public int getServerCount() {
+        return jda.getGuilds().size();
+    }
+    
+    public int getUserCount() {
+        return jda.getUsers().size();
     }
     
     public CommandProcessor getCommandProcessor() {

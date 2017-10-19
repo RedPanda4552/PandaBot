@@ -72,7 +72,7 @@ public class CommandHelp extends AbstractCommand {
         helpBuilder.append("``````diff\n");
         
         for (String command : general) {
-            if (pandaBot.userHasPermission(member, command)) {
+            if (pandaBot.memberHasPermission(member, command)) {
                 helpBuilder.append("+ ");
             } else {
                 helpBuilder.append("- ");
@@ -86,7 +86,7 @@ public class CommandHelp extends AbstractCommand {
         helpBuilder.append("``````diff\n");
         
         for (String command : music) {
-            if (pandaBot.userHasPermission(member, command)) {
+            if (pandaBot.memberHasPermission(member, command)) {
                 helpBuilder.append("+ ");
             } else {
                 helpBuilder.append("- ");
