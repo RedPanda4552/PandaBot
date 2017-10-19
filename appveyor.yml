@@ -7,11 +7,11 @@ test_script:
 after_build:
   - ps: $env:pom_artifactId = ([xml](Get-Content .\pom.xml)).project.artifactId
   - ps: $env:pom_version = ([xml](Get-Content .\pom.xml)).project.version
-  - ps: $env:versionStr = "$env:pom_version-$env:APPVEYOR_BUILD_NUMBER"
-  - ps: Update-AppveyorBuild -Version "$env:versionStr"
-  - set fileName=%pom_artifactId%-%versionStr%.jar
+  - ps: Update-AppveyorBuild -Version "$env:pom_version-$env:APPVEYOR_BUILD_NUMBER"
+  - set targetFileName=%pom_artifactId%-%pom_version%.jar
+  - set appveyorFileName=%pom_artifactId%-%pom_version%-%APPVEYOR_BUILD_NUMBER%
 cache:
   - C:\Users\appveyor\.m2
 artifacts:
-  - path: .\target\$(fileName)
-    name: $(fileName)
+  - path: .\target\$(targetFileName)
+    name: $(appveyorFileName)
