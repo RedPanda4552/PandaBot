@@ -1,11 +1,9 @@
 version: '{build}'
 
-init:
+build_script:
   - ps: $env:POM_ARTIFACT = ([xml](Get-Content .\pom.xml)).project.artifactId
   - ps: $env:POM_VERSION = ([xml](Get-Content .\pom.xml)).project.version
   - ps: Update-AppveyorBuild -Version "$env:POM_VERSION.$env:APPVEYOR_BUILD_NUMBER"
-
-build_script:
   - mvn clean install
 test_script:
 #  - mvn clean install --batch-mode
