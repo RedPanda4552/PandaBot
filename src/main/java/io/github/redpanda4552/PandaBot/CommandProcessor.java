@@ -52,6 +52,7 @@ public class CommandProcessor {
         commandMap.put("nsfw", new CommandNSFW(pandaBot, this));
         commandMap.put("lmgtfy", new CommandLmgtfy(pandaBot, this));
         commandMap.put("ping", new CommandPing(pandaBot, this));
+        commandMap.put("metrics", new CommandMetrics(pandaBot, this));
         // Music
         commandMap.put("play", new CommandPlay(pandaBot, this));
         commandMap.put("pause", new CommandPause(pandaBot, this));
