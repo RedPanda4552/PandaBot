@@ -50,6 +50,7 @@ public class PandaBot {
     private final Logger log;
     private final String superuserId;
     
+    private LogBuffer logBuffer;
     private JDA jda;
     private CommandProcessor commandProcessor;
     private GlobalAudioController gac;
@@ -69,6 +70,7 @@ public class PandaBot {
      * @param youtubeApiKey - Youtube API Key to use for video searches and info
      */
     private void init(String token, String youtubeApiKey) {
+        logBuffer = new LogBuffer();
         st = new SelectionTracker(); // Required by the play command
         commandProcessor = new CommandProcessor(this);
         
@@ -97,7 +99,7 @@ public class PandaBot {
         }
         
         updateRunningState(RunningState.READY);
-        logInfo("PandaBot and JDA online and ready!");
+        logSystemInfo("PandaBot and JDA online and ready!");
     }
     
     /**
@@ -106,7 +108,7 @@ public class PandaBot {
      * {@link Main}.
      */
     public void shutdown(boolean reload) {
-        logInfo("Stopping...");
+        logSystemInfo("Stopping...");
         updateRunningState(RunningState.STOPPING);
         
         while (jda.getPresence().getGame().getName() != RunningState.STOPPING.getStatusMessage()) {
@@ -134,19 +136,30 @@ public class PandaBot {
     }
     
     /**
-     * Log messages to the console at INFO level
+     * Log messages to the console at INFO level and add to Guild log buffer
      */
-    public void logInfo(String... strArr) {
-        for (String str : strArr)
+    public void logGuildInfo(Guild guild, String... strArr) {
+        for (String str : strArr) {
             log.info(str);
+            logBuffer.addGuildInfo(guild, str);
+        }
+    }
+    
+    public void logSystemInfo(String... strArr) {
+        for (String str : strArr) {
+            log.info(str);
+            logBuffer.addSystemInfo(str);
+        }
     }
     
     /**
      * Log messages to the console at WARNING level
      */
     public void logWarning(String... strArr) {
-        for (String str : strArr)
+        for (String str : strArr) {
             log.warning(str);
+            logBuffer.addWarning(str);
+        }
     }
     
     /**
@@ -154,9 +167,12 @@ public class PandaBot {
      */
     public void logWarning(String message, StackTraceElement[] steArr) {
         log.warning(message);
+        logBuffer.addWarning(message);
         
-        for (StackTraceElement ste : steArr)
+        for (StackTraceElement ste : steArr) {
             log.warning(ste.toString());
+            logBuffer.addWarning(ste.toString());
+        }
     }
     
     /**
@@ -237,6 +253,10 @@ public class PandaBot {
     
     public int getUserCount() {
         return jda.getUsers().size();
+    }
+    
+    public LogBuffer getLogBuffer() {
+        return logBuffer;
     }
     
     public CommandProcessor getCommandProcessor() {

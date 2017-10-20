@@ -53,6 +53,7 @@ public class CommandProcessor {
         commandMap.put("lmgtfy", new CommandLmgtfy(pandaBot, this));
         commandMap.put("ping", new CommandPing(pandaBot, this));
         commandMap.put("metrics", new CommandMetrics(pandaBot, this));
+        commandMap.put("logdump", new CommandLogdump(pandaBot, this));
         // Music
         commandMap.put("play", new CommandPlay(pandaBot, this));
         commandMap.put("pause", new CommandPause(pandaBot, this));
@@ -93,11 +94,11 @@ public class CommandProcessor {
         if (commandMap.containsKey(commandStr)) {
             AbstractCommand ac = commandMap.get(commandStr);
             boolean hasPermission = ac.getCommandType() == CommandType.SUPER ? pandaBot.memberIsSuperuser(member) : pandaBot.memberHasPermission(member, commandStr);
-            pandaBot.logInfo(String.format(
-                    "Command // g:%s[%s] // mc:%s[%s] // u:%s[%s] // c:%s // a:%s // p:%b", 
-                    guild.getName(), guild.getId(), 
-                    msgChannel.getName(), msgChannel.getId(), 
-                    member.getUser().getName(), member.getUser().getId(), 
+            pandaBot.logGuildInfo(guild, String.format(
+                    "Command // g:%s // mc:%s // u:%s // c:%s // a:%s // p:%b", 
+                    guild.getName(), 
+                    msgChannel.getName(), 
+                    member.getUser().getName(),
                     commandStr, 
                     ArrayUtils.toString(args), 
                     hasPermission
