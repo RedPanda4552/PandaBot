@@ -45,13 +45,13 @@ public class GlobalAudioController {
 
     private PandaBot pandaBot;
     private AudioPlayerManager apm;
-    private HashMap<String, ServerAudioController> sacMap; // GuildId, SAC Inst
+    private HashMap<Guild, ServerAudioController> sacMap; // Guild, SAC Inst
     
     public GlobalAudioController(PandaBot pandaBot) {
         this.pandaBot = pandaBot;
         apm = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(apm);
-        sacMap = new HashMap<String, ServerAudioController>();
+        sacMap = new HashMap<Guild, ServerAudioController>();
     }
     
     public void createServerAudioController(Guild guild) {
@@ -59,7 +59,7 @@ public class GlobalAudioController {
         ServerAudioController sac = new ServerAudioController(pandaBot, apm, ap);
         ap.addListener(sac);
         guild.getAudioManager().setSendingHandler(sac);
-        sacMap.put(guild.getId(), sac);
+        sacMap.put(guild, sac);
     }
     
     /**
@@ -70,18 +70,18 @@ public class GlobalAudioController {
         apm.shutdown();
     }
     
-    private ServerAudioController getServerAudioController(String guildId) {
-        if (sacMap.containsKey(guildId))
-            return sacMap.get(guildId);
-        return null;
+    private ServerAudioController getServerAudioController(Guild guild) {
+        if (!sacMap.containsKey(guild))
+            createServerAudioController(guild);
+        return sacMap.get(guild);
     }
     
     public void play(Guild guild, MessageChannel msgChannel, Member member, String identifier) {
-        getServerAudioController(guild.getId()).loadResource(msgChannel, member, identifier);
+        getServerAudioController(guild).loadResource(msgChannel, member, identifier);
     }
     
     public void replay(Guild guild, MessageChannel msgChannel, Member member) {
-        String identifier = getServerAudioController(guild.getId()).getLastIdentifier();
+        String identifier = getServerAudioController(guild).getLastIdentifier();
         
         if (identifier == null || identifier.isEmpty()) {
             pandaBot.sendMessage(msgChannel, "Nothing to replay!");
@@ -92,12 +92,12 @@ public class GlobalAudioController {
     }
     
     public void pause(Guild guild, MessageChannel msgChannel) {
-        AudioPlayer ap = getServerAudioController(guild.getId()).getAudioPlayer();
+        AudioPlayer ap = getServerAudioController(guild).getAudioPlayer();
         ap.setPaused(!ap.isPaused());
     }
     
     public void skip(Guild guild, MessageChannel msgChannel) {
-        AudioPlayer ap = getServerAudioController(guild.getId()).getAudioPlayer();
+        AudioPlayer ap = getServerAudioController(guild).getAudioPlayer();
         AudioTrack at = ap.getPlayingTrack();
         
         if (at == null) {
@@ -114,7 +114,7 @@ public class GlobalAudioController {
     }
     
     public void stop(Guild guild, MessageChannel msgChannel) {
-        ServerAudioController sac = getServerAudioController(guild.getId());
+        ServerAudioController sac = getServerAudioController(guild);
         MessageBuilder mb = new MessageBuilder();
         mb.append("Cleared **");
         mb.append(sac.emptyQueue());
@@ -124,7 +124,7 @@ public class GlobalAudioController {
     }
     
     public void nowPlaying(Guild guild, MessageChannel msgChannel) {
-        AudioTrack at = getServerAudioController(guild.getId()).getAudioPlayer().getPlayingTrack();
+        AudioTrack at = getServerAudioController(guild).getAudioPlayer().getPlayingTrack();
         
         if (at == null) {
             pandaBot.sendMessage(msgChannel, "Nothing is playing!");
@@ -137,7 +137,7 @@ public class GlobalAudioController {
     }
     
     public void queue(Guild guild, MessageChannel msgChannel) {
-        LinkedList<AudioTrack> queue = getServerAudioController(guild.getId()).getQueue();
+        LinkedList<AudioTrack> queue = getServerAudioController(guild).getQueue();
         
         if (queue.isEmpty()) {
             pandaBot.sendMessage(msgChannel, "The queue is empty!");
