@@ -89,7 +89,7 @@ public class CommandProcessor {
         
         String[] args = messageContent.split(" ");
         // hasPrefix is true at this point, so there is at LEAST 1 char in here
-        String commandStr = args[0].replaceFirst(PREFIX, ""); // Remove the leading prefix
+        String commandStr = args[0].replaceFirst(PREFIX, "").toLowerCase(); // Remove the leading prefix
         args = (String[]) ArrayUtils.remove(args, 0);
         
         if (commandMap.containsKey(commandStr)) {
