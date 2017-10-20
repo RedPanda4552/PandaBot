@@ -72,6 +72,11 @@ public class PandaBot {
         st = new SelectionTracker(); // Required by the play command
         commandProcessor = new CommandProcessor(this);
         
+        if (token == null || token.isEmpty()) {
+            logWarning("Null or empty Discord bot token!");
+            return;
+        }
+        
         try {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(token)
