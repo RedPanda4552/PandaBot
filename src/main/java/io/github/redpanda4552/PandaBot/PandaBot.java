@@ -41,6 +41,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
@@ -253,6 +254,10 @@ public class PandaBot {
     
     public int getUserCount() {
         return jda.getUsers().size();
+    }
+    
+    public int getTextChannelCount() {
+        return jda.getTextChannels().size();
     }
     
     public LogBuffer getLogBuffer() {

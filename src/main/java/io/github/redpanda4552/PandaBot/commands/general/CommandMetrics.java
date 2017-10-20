@@ -50,6 +50,7 @@ public class CommandMetrics extends AbstractCommand {
           .addField("Uptime", DurationFormatUtils.formatDuration(pandaBot.getRunningTime(), "d:HH:mm:ss"), true)
           .addField("Servers", String.valueOf(pandaBot.getServerCount()), true)
           .addField("Users", String.valueOf(pandaBot.getUserCount()), true)
+          .addField("Message Channels", String.valueOf(pandaBot.getTextChannelCount()), false)
           .setColor(new Color(20, 210, 45));
         mb.setEmbed(eb.build());
         pandaBot.sendMessage(msgChannel, mb.build());
