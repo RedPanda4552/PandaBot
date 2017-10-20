@@ -47,9 +47,12 @@ public class CommandProcessor {
     public CommandProcessor(PandaBot pandaBot) {
         this.pandaBot = pandaBot;
         commandMap = new HashMap<String, AbstractCommand>();
+        // General
         commandMap.put("echo", new CommandEcho(pandaBot, this));
         commandMap.put("nsfw", new CommandNSFW(pandaBot, this));
         commandMap.put("lmgtfy", new CommandLmgtfy(pandaBot, this));
+        commandMap.put("ping", new CommandPing(pandaBot, this));
+        // Music
         commandMap.put("play", new CommandPlay(pandaBot, this));
         commandMap.put("pause", new CommandPause(pandaBot, this));
         commandMap.put("skip", new CommandSkip(pandaBot, this));
@@ -58,8 +61,8 @@ public class CommandProcessor {
         commandMap.put("queue", new CommandQueue(pandaBot, this));
         commandMap.put("join", new CommandJoin(pandaBot, this));
         commandMap.put("leave", new CommandLeave(pandaBot, this));
+        // Super
         commandMap.put("reload", new CommandReload(pandaBot, this));
-        commandMap.put("ping", new CommandPing(pandaBot, this));
         commandMap.put("shutdown", new CommandShutdown(pandaBot, this));
         // Help MUST be the last command registered! It looks at this map!
         commandMap.put("help", new CommandHelp(pandaBot, this));
