@@ -92,6 +92,7 @@ public class PandaBot {
         }
         
         updateRunningState(RunningState.READY);
+        logInfo("PandaBot and JDA online and ready!");
     }
     
     /**
@@ -102,6 +103,15 @@ public class PandaBot {
     public void shutdown(boolean reload) {
         logInfo("Stopping...");
         updateRunningState(RunningState.STOPPING);
+        
+        while (jda.getPresence().getGame().getName() != RunningState.STOPPING.getStatusMessage()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                logWarning(e.getMessage(), e.getStackTrace());
+            }
+        } 
+        
         st.dropAll();
         getGlobalAudioController().killAll();
         jda.shutdown();
