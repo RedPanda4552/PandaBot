@@ -47,7 +47,7 @@ public class CommandMetrics extends AbstractCommand {
         MessageBuilder mb = new MessageBuilder();
         EmbedBuilder eb = new EmbedBuilder()
           .setTitle("PandaBot Metrics")
-          .addField("Uptime (Days:Hrs:Mins:Secs)", DurationFormatUtils.formatDuration(pandaBot.getRunningTime(), "ddd:HH:mm:ss"), false)
+          .addField("Uptime", DurationFormatUtils.formatDuration(pandaBot.getRunningTime(), "d:HH:mm:ss"), true)
           .addField("Servers", String.valueOf(pandaBot.getServerCount()), true)
           .addField("Users", String.valueOf(pandaBot.getUserCount()), true)
           .setColor(new Color(20, 210, 45));
