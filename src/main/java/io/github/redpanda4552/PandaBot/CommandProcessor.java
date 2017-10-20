@@ -93,12 +93,6 @@ public class CommandProcessor {
         if (commandMap.containsKey(commandStr)) {
             AbstractCommand ac = commandMap.get(commandStr);
             boolean hasPermission = ac.getCommandType() == CommandType.SUPER ? pandaBot.memberIsSuperuser(member) : pandaBot.memberHasPermission(member, commandStr);
-            
-            if (hasPermission) {
-                message.delete().complete();
-                ac.execute(guild, msgChannel, member, args);
-            }
-            
             pandaBot.logInfo(String.format(
                     "Command // g:%s[%s] // mc:%s[%s] // u:%s[%s] // c:%s // a:%s // p:%b", 
                     guild.getName(), guild.getId(), 
@@ -108,6 +102,12 @@ public class CommandProcessor {
                     ArrayUtils.toString(args), 
                     hasPermission
             ));
+            
+            if (hasPermission) {
+                message.delete().complete();
+                ac.execute(guild, msgChannel, member, args);
+            }
+            
             return;
         }
     }
