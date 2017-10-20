@@ -95,17 +95,19 @@ public class PandaBot {
     }
     
     /**
-     * Stop all {@link ServerAudioController} instances, shut down {@link JDA},
-     * and stop the PandaBot constructor loop so that a new PandaBot instance
-     * can be spawned by {@link Main}.
+     * Stop all {@link ServerAudioController} instances, shut down {@link JDA}.
+     * If reload is set to true, a new PandaBot will be instanced by 
+     * {@link Main}.
      */
-    public void reload() {
+    public void shutdown(boolean reload) {
         logInfo("Stopping...");
         updateRunningState(RunningState.STOPPING);
         st.dropAll();
         getGlobalAudioController().killAll();
         jda.shutdown();
-        Main.reinstance();
+        
+        if (reload)
+            Main.reinstance();
     }
     
     /**

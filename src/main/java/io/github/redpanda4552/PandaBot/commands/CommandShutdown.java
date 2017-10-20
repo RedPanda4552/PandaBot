@@ -29,15 +29,15 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageChannel;
 
-public class CommandReload extends AbstractCommand {
+public class CommandShutdown extends AbstractCommand {
 
-    public CommandReload(PandaBot pandaBot, CommandProcessor commandProcessor) {
+    public CommandShutdown(PandaBot pandaBot, CommandProcessor commandProcessor) {
         super(pandaBot, commandProcessor);
     }
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.shutdown(true);
+        pandaBot.shutdown(false);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     public String getHelpMessage() {
-        return "Reload PandaBot.";
+        return "";
     }
 
     @Override

@@ -60,6 +60,7 @@ public class CommandProcessor {
         commandMap.put("leave", new CommandLeave(pandaBot, this));
         commandMap.put("reload", new CommandReload(pandaBot, this));
         commandMap.put("ping", new CommandPing(pandaBot, this));
+        commandMap.put("shutdown", new CommandShutdown(pandaBot, this));
         // Help MUST be the last command registered! It looks at this map!
         commandMap.put("help", new CommandHelp(pandaBot, this));
     }
