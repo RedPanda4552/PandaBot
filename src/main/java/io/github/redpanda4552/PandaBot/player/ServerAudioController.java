@@ -51,6 +51,7 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     private AudioFrame lastFrame;
     private MessageChannel lastMessageChannel;
     private LinkedList<AudioTrack> queue;
+    private String lastIdentifier;
     
     public ServerAudioController(PandaBot pandaBot, AudioPlayerManager apm, AudioPlayer ap) {
         this.pandaBot = pandaBot;
@@ -74,6 +75,10 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     
     public LinkedList<AudioTrack> getQueue() {
         return queue;
+    }
+    
+    public String getLastIdentifier() {
+        return lastIdentifier;
     }
     
     public void loadResource(MessageChannel msgChannel, Member member, String identifier) {
@@ -172,6 +177,8 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        lastIdentifier = track.getIdentifier();
+        
         if (endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) {
             ap.playTrack(queue.poll());
         } else {

@@ -56,6 +56,7 @@ public class CommandProcessor {
         commandMap.put("logdump", new CommandLogdump(pandaBot, this));
         // Music
         commandMap.put("play", new CommandPlay(pandaBot, this));
+        commandMap.put("replay", new CommandReplay(pandaBot, this));
         commandMap.put("pause", new CommandPause(pandaBot, this));
         commandMap.put("skip", new CommandSkip(pandaBot, this));
         commandMap.put("stop", new CommandStop(pandaBot, this));

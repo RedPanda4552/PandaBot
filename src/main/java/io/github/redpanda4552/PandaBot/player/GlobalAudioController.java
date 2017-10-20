@@ -80,6 +80,17 @@ public class GlobalAudioController {
         getServerAudioController(guild.getId()).loadResource(msgChannel, member, identifier);
     }
     
+    public void replay(Guild guild, MessageChannel msgChannel, Member member) {
+        String identifier = getServerAudioController(guild.getId()).getLastIdentifier();
+        
+        if (identifier == null || identifier.isEmpty()) {
+            pandaBot.sendMessage(msgChannel, "Nothing to replay!");
+            return;
+        }
+        
+        play(guild, msgChannel, member, identifier);
+    }
+    
     public void pause(Guild guild, MessageChannel msgChannel) {
         AudioPlayer ap = getServerAudioController(guild.getId()).getAudioPlayer();
         ap.setPaused(!ap.isPaused());
