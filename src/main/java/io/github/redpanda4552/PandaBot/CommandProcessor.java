@@ -43,6 +43,7 @@ public class CommandProcessor {
     
     private PandaBot pandaBot;
     private HashMap<String, AbstractCommand> commandMap;
+    private long commandAttempts, commandExecutions;
     
     public CommandProcessor(PandaBot pandaBot) {
         this.pandaBot = pandaBot;
@@ -104,8 +105,10 @@ public class CommandProcessor {
                     ArrayUtils.toString(args), 
                     hasPermission
             ));
+            commandAttempts++;
             
             if (hasPermission) {
+                commandExecutions++;
                 message.delete().complete();
                 ac.execute(guild, msgChannel, member, args);
             }
@@ -122,5 +125,13 @@ public class CommandProcessor {
         if (commandMap.containsKey(name))
             return commandMap.get(name);
         return null;
+    }
+    
+    public long getCommandAttempts() {
+        return commandAttempts;
+    }
+    
+    public long getCommandExecutions() {
+        return commandExecutions;
     }
 }
