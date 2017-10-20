@@ -52,7 +52,7 @@ public class CommandLmgtfy extends AbstractCommand {
     
     @Override
     public String getHelpArgs() {
-        return "<search terms>";
+        return "[<search terms>]";
     }
 
     @Override

@@ -48,7 +48,7 @@ public class CommandEcho extends AbstractCommand {
     
     @Override
     public String getHelpArgs() {
-        return "<text>";
+        return "[<text>]";
     }
 
     @Override

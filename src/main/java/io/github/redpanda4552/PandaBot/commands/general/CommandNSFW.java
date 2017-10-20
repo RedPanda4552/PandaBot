@@ -53,7 +53,7 @@ public class CommandNSFW extends AbstractCommand {
 
     @Override
     public String getHelpArgs() {
-        return "<url>";
+        return "[<url>]";
     }
     
     @Override
