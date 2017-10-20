@@ -51,6 +51,7 @@ public class CommandMetrics extends AbstractCommand {
           .addField("Servers", String.valueOf(pandaBot.getServerCount()), true)
           .addField("Users", String.valueOf(pandaBot.getUserCount()), true)
           .addField("Message Channels", String.valueOf(pandaBot.getTextChannelCount()), true)
+          .addField("Active Audio Players", String.valueOf(pandaBot.getVoiceChannelPlayingCount()), true)
           .addField("Command Executions/Attempts", String.format("%d/%d", pandaBot.getCommandProcessor().getCommandExecutions(), pandaBot.getCommandProcessor().getCommandAttempts()), true)
           .setColor(new Color(20, 210, 45));
         mb.setEmbed(eb.build());

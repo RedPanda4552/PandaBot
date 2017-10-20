@@ -259,6 +259,16 @@ public class PandaBot {
         return jda.getTextChannels().size();
     }
     
+    public int getVoiceChannelPlayingCount() {
+        int ret = 0;
+        
+        for (ServerAudioController sac : getGlobalAudioController().getAllServerAudioControllers())
+            if (sac.getAudioPlayer().getPlayingTrack() != null)
+                ret++;
+        
+        return ret;
+    }
+    
     public LogBuffer getLogBuffer() {
         return logBuffer;
     }

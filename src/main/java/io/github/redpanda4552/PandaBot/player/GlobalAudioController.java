@@ -23,6 +23,7 @@
  */
 package io.github.redpanda4552.PandaBot.player;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -74,6 +75,10 @@ public class GlobalAudioController {
         if (!sacMap.containsKey(guild))
             createServerAudioController(guild);
         return sacMap.get(guild);
+    }
+    
+    public Collection<ServerAudioController> getAllServerAudioControllers() {
+        return sacMap.values();
     }
     
     public void play(Guild guild, MessageChannel msgChannel, Member member, String identifier) {
