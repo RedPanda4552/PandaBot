@@ -42,8 +42,20 @@ public class CommandLogdump extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        Iterator<String> iterator = pandaBot.getLogBuffer().getGuildInfo(guild).iterator();
+        int pageLimit = 1;
         MessageBuilder mb = new MessageBuilder();
+        
+        if (args.length >= 1) {
+            try {
+                pageLimit = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                mb.append("Argument \"")
+                  .append(args[0])
+                  .append("\" is not an integer, assuming 1.\n");
+            }
+        }
+        
+        Iterator<String> iterator = pandaBot.getLogBuffer().getGuildInfo(guild).iterator();
         int page = 1;
         mb.append("```ini\n")
           .append("[PandaBot Logdump Page ")
@@ -61,6 +73,8 @@ public class CommandLogdump extends AbstractCommand {
                 mb.append("```");
                 pandaBot.sendMessage(msgChannel, mb.build());
                 mb.clear();
+                if (page > pageLimit)
+                    break;
                 mb.append("```ini\n")
                   .append("[PandaBot Logdump Page ")
                   .append(page)
@@ -72,7 +86,7 @@ public class CommandLogdump extends AbstractCommand {
 
     @Override
     public String getHelpArgs() {
-        return "";
+        return "<page count>";
     }
 
     @Override
