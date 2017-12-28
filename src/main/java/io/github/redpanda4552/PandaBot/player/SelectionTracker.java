@@ -35,10 +35,16 @@ public class SelectionTracker {
     private class SelectionRow {
         private Message message;
         private AudioPlaylist audioPlaylist;
+        private HashMap<String, String> loadList;
         
         protected SelectionRow(Message message, AudioPlaylist audioPlaylist) {
             this.message = message;
             this.audioPlaylist = audioPlaylist;
+        }
+        
+        protected SelectionRow(Message message, HashMap<String, String> loadList) {
+            this.message = message;
+            this.loadList = loadList;
         }
         
         protected Message getMessage() {
@@ -48,6 +54,10 @@ public class SelectionTracker {
         protected AudioPlaylist getAudioPlaylist() {
             return audioPlaylist;
         }
+        
+        protected HashMap<String, String> getLoadList() {
+            return loadList;
+        }
     }
     
     private HashMap<User, SelectionRow> userMap;
@@ -56,19 +66,21 @@ public class SelectionTracker {
         userMap = new HashMap<User, SelectionRow>();
     }
     
-    public void upsert(User usr, Message msg, AudioPlaylist ap) {
-        if (contains(usr)) {
+    public void upsertAP(User usr, Message msg, AudioPlaylist ap) {
+        if (contains(usr))
             getMessageOf(usr).delete().complete();
-        }
-        
         userMap.put(usr, new SelectionRow(msg, ap));
     }
     
+    public void upsertLL(User usr, Message msg, HashMap<String, String> loadList) {
+        if (contains(usr))
+            getMessageOf(usr).delete().complete();
+        userMap.put(usr, new SelectionRow(msg, loadList));
+    }
+    
     public void remove(User usr) {
-        if (!contains(usr)) {
+        if (!contains(usr))
             return;
-        }
-        
         getMessageOf(usr).delete().complete();
         userMap.remove(usr);
     }
@@ -78,10 +90,8 @@ public class SelectionTracker {
     }
     
     public Message getMessageOf(User usr) {
-        if (!contains(usr)) {
+        if (!contains(usr))
             return null;
-        }
-        
         return userMap.get(usr).getMessage();
     }
     
@@ -96,9 +106,14 @@ public class SelectionTracker {
         return userMap.get(usr).getAudioPlaylist();
     }
     
+    public HashMap<String, String> getLoadListOf(User usr) {
+        if (!contains(usr))
+            return null;
+        return userMap.get(usr).getLoadList();
+    }
+    
     public void dropAll() {
-        for (User usr : userMap.keySet()) {
+        for (User usr : userMap.keySet())
             remove(usr);
-        }
     }
 }

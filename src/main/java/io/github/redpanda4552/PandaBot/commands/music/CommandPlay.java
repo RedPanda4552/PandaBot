@@ -130,7 +130,7 @@ public class CommandPlay extends AbstractCommand {
             }
             
             Message msg = pandaBot.sendMessage(msgChannel, mb.build());
-            st.upsert(member.getUser(), msg, ap);
+            st.upsertAP(member.getUser(), msg, ap);
             return;
         }
         
