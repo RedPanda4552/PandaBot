@@ -1,6 +1,4 @@
 # PandaBot - Discord Bot
-[![Build status](https://ci.appveyor.com/api/projects/status/x8fgdoh7qimanjww/branch/master?svg=true)](https://ci.appveyor.com/project/RedPanda4552/pandabot/branch/master/artifacts)
-
 
 A proper readme (probably) coming soon. Until then, crappy abridged readme.
 
