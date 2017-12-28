@@ -65,6 +65,8 @@ public class CommandProcessor {
         commandMap.put("queue", new CommandQueue(pandaBot, this));
         commandMap.put("join", new CommandJoin(pandaBot, this));
         commandMap.put("leave", new CommandLeave(pandaBot, this));
+        commandMap.put("save", new CommandSave(pandaBot, this));
+        commandMap.put("load", new CommandLoad(pandaBot, this));
         // Super
         commandMap.put("reload", new CommandReload(pandaBot, this));
         commandMap.put("shutdown", new CommandShutdown(pandaBot, this));
