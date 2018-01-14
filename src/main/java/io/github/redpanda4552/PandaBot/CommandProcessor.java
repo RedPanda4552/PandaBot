@@ -85,7 +85,7 @@ public class CommandProcessor {
      * Check if a message is a command, and execute if so.
      */
     public void process(Guild guild, MessageChannel msgChannel, Member member, Message message) {
-        String messageContent = message.getContent();
+        String messageContent = message.getContentDisplay();
         
         if (!hasPrefix(messageContent))
             return;

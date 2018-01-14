@@ -45,7 +45,6 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class PandaBot {
 
@@ -89,7 +88,7 @@ public class PandaBot {
                     .setAutoReconnect(true)
                     .addEventListener(new EventListener(this, commandProcessor))
                     .buildBlocking();
-        } catch (LoginException | IllegalArgumentException | InterruptedException | RateLimitedException e) {
+        } catch (LoginException | IllegalArgumentException | InterruptedException e) {
             logWarning(e.getMessage(), e.getStackTrace());
             return;
         }
@@ -140,7 +139,7 @@ public class PandaBot {
      */
     private void updateRunningState(RunningState runningState) {
         if (jda != null)
-            jda.getPresence().setGame(Game.of(runningState.getStatusMessage()));
+            jda.getPresence().setGame(Game.listening(runningState.getStatusMessage()));
     }
     
     /**
