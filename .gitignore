@@ -5,3 +5,4 @@ JDA-*
 .classpath
 pandabot.xml
 dependency-reduced-pom.xml
+*.db
