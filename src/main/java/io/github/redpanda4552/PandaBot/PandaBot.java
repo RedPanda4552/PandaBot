@@ -23,10 +23,14 @@
  */
 package io.github.redpanda4552.PandaBot;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
+import com.mashape.unirest.http.Unirest;
+
+import io.github.redpanda4552.PandaBot.apis.XboxAPI;
 import io.github.redpanda4552.PandaBot.player.GlobalAudioController;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
 import io.github.redpanda4552.PandaBot.player.ServerAudioController;
@@ -59,11 +63,11 @@ public class PandaBot {
     private SelectionTracker st;
     private AbstractAdapter sql;
     
-    public PandaBot(Logger log, String token, String youtubeApiKey, String superuserId) {
+    public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey, String xboxAPIKey) {
         startTime = System.currentTimeMillis();
         this.log = log;
         this.superuserId = superuserId;
-        init(token, youtubeApiKey);
+        init(token, youtubeApiKey, xboxAPIKey);
     }
     
     /**
@@ -72,7 +76,7 @@ public class PandaBot {
      * @param token - Discord bot token to use for JDA.
      * @param youtubeApiKey - Youtube API Key to use for video searches and info
      */
-    private void init(String token, String youtubeApiKey) {
+    private void init(String token, String youtubeApiKey, String xboxAPIKey) {
         logBuffer = new LogBuffer();
         st = new SelectionTracker(); // Required by the play command
         commandProcessor = new CommandProcessor(this);
@@ -104,6 +108,7 @@ public class PandaBot {
             gac.createServerAudioController(guild);
         }
         
+        XboxAPI.setAPIKey(xboxAPIKey);
         updateRunningState(RunningState.READY);
         logSystemInfo("PandaBot and JDA online and ready!");
     }
@@ -124,6 +129,12 @@ public class PandaBot {
                 logWarning(e.getMessage(), e.getStackTrace());
             }
         } 
+        
+        try {
+            Unirest.shutdown();
+        } catch (IOException e) {
+            logWarning(e.getMessage(), e.getStackTrace());
+        }
         
         st.dropAll();
         getGlobalAudioController().killAll();
