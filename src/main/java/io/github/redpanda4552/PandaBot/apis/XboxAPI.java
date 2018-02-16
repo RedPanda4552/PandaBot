@@ -38,6 +38,27 @@ public class XboxAPI {
 
     private static String xboxAPIKey;
     
+    public enum XboxAPIEndpoint {
+
+        XUID_FROM_GAMERTAG("/v2/xuid/{var}"),
+        ACTIVITY_FROM_XUID("/v2/{var}/activity"),
+        PRESENCE_FROM_XUID("/v2/{var}/presence");
+        
+        private String url;
+        
+        private XboxAPIEndpoint(String url) {
+            this.url = url;
+        }
+        
+        /**
+         * Get a Xbox API URL. Substitutes the var parameter for the variable part
+         * of the URL.
+         */
+        public String getUrl(String var) {
+            return "https://xboxapi.com" + url.replace("{var}", var);
+        }
+    }
+    
     public static void setAPIKey(String str) {
         xboxAPIKey = str;
     }
