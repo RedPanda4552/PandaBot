@@ -30,7 +30,6 @@ import javax.security.auth.login.LoginException;
 
 import com.mashape.unirest.http.Unirest;
 
-import io.github.redpanda4552.PandaBot.apis.XboxAPI;
 import io.github.redpanda4552.PandaBot.player.GlobalAudioController;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
 import io.github.redpanda4552.PandaBot.player.ServerAudioController;
@@ -108,7 +107,6 @@ public class PandaBot {
             gac.createServerAudioController(guild);
         }
         
-        XboxAPI.setAPIKey(xboxAPIKey);
         updateRunningState(RunningState.READY);
         logSystemInfo("PandaBot and JDA online and ready!");
     }
