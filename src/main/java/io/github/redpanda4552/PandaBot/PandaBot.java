@@ -62,11 +62,11 @@ public class PandaBot {
     private SelectionTracker st;
     private AbstractAdapter sql;
     
-    public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey, String xboxAPIKey) {
+    public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
         startTime = System.currentTimeMillis();
         this.log = log;
         this.superuserId = superuserId;
-        init(token, youtubeApiKey, xboxAPIKey);
+        init(token, youtubeApiKey);
     }
     
     /**
@@ -75,7 +75,7 @@ public class PandaBot {
      * @param token - Discord bot token to use for JDA.
      * @param youtubeApiKey - Youtube API Key to use for video searches and info
      */
-    private void init(String token, String youtubeApiKey, String xboxAPIKey) {
+    private void init(String token, String youtubeApiKey) {
         logBuffer = new LogBuffer();
         st = new SelectionTracker(); // Required by the play command
         commandProcessor = new CommandProcessor(this);
