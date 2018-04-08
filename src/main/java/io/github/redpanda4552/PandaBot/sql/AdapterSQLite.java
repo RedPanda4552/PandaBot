@@ -43,6 +43,7 @@ import io.github.redpanda4552.PandaBot.PandaBot;
 public class AdapterSQLite extends AbstractAdapter {
     
     private final String dbLocation;
+    protected Connection connection;
     
     /**
      * Creates a new SQLite instance

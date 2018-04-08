@@ -31,7 +31,6 @@ import io.github.redpanda4552.PandaBot.PandaBot;
 public abstract class AbstractAdapter {
     
     protected PandaBot pandaBot;
-    protected Connection connection;
     
     public AbstractAdapter(PandaBot pandaBot) {
         this.pandaBot = pandaBot;
