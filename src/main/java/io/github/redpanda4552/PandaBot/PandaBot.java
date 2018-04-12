@@ -51,6 +51,12 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 
 public class PandaBot {
 
+    private static PandaBot self;
+    
+    public static PandaBot getSelf() {
+        return self;
+    }
+    
     private final long startTime;
     private final Logger log;
     private final String superuserId;
@@ -64,6 +70,7 @@ public class PandaBot {
     
     public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
         startTime = System.currentTimeMillis();
+        self = this;
         this.log = log;
         this.superuserId = superuserId;
         init(token, youtubeApiKey);
