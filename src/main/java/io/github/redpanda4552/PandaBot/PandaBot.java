@@ -214,6 +214,10 @@ public class PandaBot {
         return true;
     }
     
+    public JDA getJDA() {
+        return jda;
+    }
+    
     /**
      * Send a message to a channel using a built {@link Message}.
      * @return The final {@link Message} instance.
