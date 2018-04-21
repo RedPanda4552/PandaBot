@@ -23,12 +23,14 @@
  */
 package io.github.redpanda4552.PandaBot;
 
+import io.github.redpanda4552.PandaBot.util.MessageArchiver;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class EventListener extends ListenerAdapter {
@@ -77,5 +79,10 @@ public class EventListener extends ListenerAdapter {
           .append(event.getGuild().getName())
           .append("**!");
         pandaBot.sendMessage(event.getMember().getDefaultChannel(), mb.build());
+    }
+    
+    @Override
+    public void onGuildMessageUpdate(GuildMessageUpdateEvent event) {
+        MessageArchiver.copyTo(event.getMessage());
     }
 }
