@@ -199,6 +199,19 @@ public class PandaBot {
     }
     
     /**
+     * Log a stack trace to the console at WARNING level
+     */
+    public void logWarning(Throwable e) {
+        log.warning(e.getMessage());
+        logBuffer.addWarning(e.getMessage());
+        
+        for (StackTraceElement ste : e.getStackTrace()) {
+            log.warning(ste.toString());
+            logBuffer.addWarning(ste.toString());
+        }
+    }
+    
+    /**
      * Check if a member is the superuser.
      */
     public boolean memberIsSuperuser(Member member) {
