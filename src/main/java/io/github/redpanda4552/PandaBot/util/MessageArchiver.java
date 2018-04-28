@@ -23,10 +23,8 @@
  */
 package io.github.redpanda4552.PandaBot.util;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -49,19 +47,6 @@ public class MessageArchiver {
             archiveChannel = channels.get(0);
         }
         
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setColor(guild.getMember(message.getAuthor()).getColor());
-        eb.setAuthor(guild.getMember(message.getAuthor()).getEffectiveName());
-        eb.setDescription(message.getContentDisplay());
-        eb.setThumbnail(message.getAuthor().getEffectiveAvatarUrl());
-        if (!message.getAttachments().isEmpty())
-            eb.setImage(message.getAttachments().get(0).getUrl());
-        eb.addField("Source", message.getTextChannel().getAsMention(), true);
-        // If we get timezone problems later, stop hard coding the 4 hours here.
-        // I don't feel like doing all the temporal crap just to print a single
-        // date and time. So screw it, the one liner hack wins.
-        eb.addField("Date (US Eastern)", message.getCreationTime().minusHours(4).format(DateTimeFormatter.ISO_LOCAL_DATE), true);
-        eb.addField("Time (US Eastern)", message.getCreationTime().minusHours(4).format(DateTimeFormatter.ISO_LOCAL_TIME), true);
-        archiveChannel.sendMessage(eb.build()).complete();
+        archiveChannel.sendMessage(MessageEmbedBuilder.build(message)).complete();
     }
 }
