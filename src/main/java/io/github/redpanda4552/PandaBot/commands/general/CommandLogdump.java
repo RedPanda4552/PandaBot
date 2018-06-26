@@ -24,7 +24,9 @@
 package io.github.redpanda4552.PandaBot.commands.general;
 
 import java.util.Iterator;
+
 import io.github.redpanda4552.PandaBot.CommandProcessor;
+import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -55,7 +57,7 @@ public class CommandLogdump extends AbstractCommand {
             }
         }
         
-        Iterator<String> iterator = pandaBot.getLogBuffer().getGuildInfo(guild).iterator();
+        Iterator<String> iterator = LogBuffer.getGuildInfo(guild).iterator();
         int page = 1;
         mb.append("```ini\n")
           .append("[PandaBot Logdump Page ")

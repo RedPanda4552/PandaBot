@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import io.github.redpanda4552.PandaBot.CommandProcessor;
+import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
@@ -73,7 +74,7 @@ public class CommandLoad extends AbstractCommand {
                 resultMap.put(resultSet.getString("name"), resultSet.getString("url"));
             }
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
         }
         
         if (resultMap.isEmpty()) {

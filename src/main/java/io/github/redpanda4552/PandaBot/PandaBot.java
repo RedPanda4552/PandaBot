@@ -58,10 +58,8 @@ public class PandaBot {
     }
     
     private final long startTime;
-    private final Logger log;
     private final String superuserId;
     
-    private LogBuffer logBuffer;
     private JDA jda;
     private CommandProcessor commandProcessor;
     private GlobalAudioController gac;
@@ -71,7 +69,6 @@ public class PandaBot {
     public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
         startTime = System.currentTimeMillis();
         self = this;
-        this.log = log;
         this.superuserId = superuserId;
         init(token, youtubeApiKey);
     }
@@ -83,12 +80,11 @@ public class PandaBot {
      * @param youtubeApiKey - Youtube API Key to use for video searches and info
      */
     private void init(String token, String youtubeApiKey) {
-        logBuffer = new LogBuffer();
         st = new SelectionTracker(); // Required by the play command
         commandProcessor = new CommandProcessor(this);
         
         if (token == null || token.isEmpty()) {
-            logWarning("Null or empty Discord bot token!");
+            LogBuffer.sysWarn("Null or empty Discord bot token!");
             return;
         }
         
@@ -99,7 +95,7 @@ public class PandaBot {
                     .addEventListener(new EventListener(this, commandProcessor))
                     .buildBlocking();
         } catch (LoginException | IllegalArgumentException | InterruptedException e) {
-            logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return;
         }
         
@@ -115,7 +111,7 @@ public class PandaBot {
         }
         
         updateRunningState(RunningState.READY);
-        logSystemInfo("PandaBot and JDA online and ready!");
+        LogBuffer.sysInfo("PandaBot and JDA online and ready!");
     }
     
     /**
@@ -124,21 +120,21 @@ public class PandaBot {
      * {@link Main}.
      */
     public void shutdown(boolean reload) {
-        logSystemInfo("Stopping...");
+        LogBuffer.sysInfo("Stopping...");
         updateRunningState(RunningState.STOPPING);
         
         while (jda.getPresence().getGame().getName() != RunningState.STOPPING.getStatusMessage()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                logWarning(e.getMessage(), e.getStackTrace());
+                LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             }
         } 
         
         try {
             Unirest.shutdown();
         } catch (IOException e) {
-            logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
         }
         
         st.dropAll();
@@ -156,59 +152,6 @@ public class PandaBot {
     private void updateRunningState(RunningState runningState) {
         if (jda != null)
             jda.getPresence().setGame(Game.listening(runningState.getStatusMessage()));
-    }
-    
-    /**
-     * Log messages to the console at INFO level and add to Guild log buffer
-     */
-    public void logGuildInfo(Guild guild, String... strArr) {
-        for (String str : strArr) {
-            log.info(str);
-            logBuffer.addGuildInfo(guild, str);
-        }
-    }
-    
-    public void logSystemInfo(String... strArr) {
-        for (String str : strArr) {
-            log.info(str);
-            logBuffer.addSystemInfo(str);
-        }
-    }
-    
-    /**
-     * Log messages to the console at WARNING level
-     */
-    public void logWarning(String... strArr) {
-        for (String str : strArr) {
-            log.warning(str);
-            logBuffer.addWarning(str);
-        }
-    }
-    
-    /**
-     * Log a stack trace to the console at WARNING level
-     */
-    public void logWarning(String message, StackTraceElement[] steArr) {
-        log.warning(message);
-        logBuffer.addWarning(message);
-        
-        for (StackTraceElement ste : steArr) {
-            log.warning(ste.toString());
-            logBuffer.addWarning(ste.toString());
-        }
-    }
-    
-    /**
-     * Log a stack trace to the console at WARNING level
-     */
-    public void logWarning(Throwable e) {
-        log.warning(e.getMessage());
-        logBuffer.addWarning(e.getMessage());
-        
-        for (StackTraceElement ste : e.getStackTrace()) {
-            log.warning(ste.toString());
-            logBuffer.addWarning(ste.toString());
-        }
     }
     
     /**
@@ -307,10 +250,6 @@ public class PandaBot {
                 ret++;
         
         return ret;
-    }
-    
-    public LogBuffer getLogBuffer() {
-        return logBuffer;
     }
     
     public CommandProcessor getCommandProcessor() {

@@ -30,61 +30,61 @@ import net.dv8tion.jda.core.entities.Guild;
 
 public class LogBuffer {
 
-    private final int MAX_INFO = 80, MAX_WARN = 240;
+    private static final int MAX_INFO = 80, MAX_WARN = 240;
     
-    private HashMap<Guild, LinkedList<String>> guildInfoBuf;
-    private LinkedList<String> systemInfoBuf;
-    private LinkedList<String> warnBuf;
+    private static HashMap<Guild, LinkedList<String>> guildInfoBuf = new HashMap<Guild, LinkedList<String>>();
+    private static LinkedList<String> systemInfoBuf = new LinkedList<String>();
+    private static LinkedList<String> systemWarnBuf = new LinkedList<String>();
     
-    public LogBuffer() {
-        guildInfoBuf = new HashMap<Guild, LinkedList<String>>();
-        systemInfoBuf = new LinkedList<String>();
-        warnBuf = new LinkedList<String>();
-    }
-    
-    public void addGuildInfo(Guild guild, String str) {
+    public static void guildInfo(Guild guild, String... strArr) {
         if (!guildInfoBuf.containsKey(guild))
             guildInfoBuf.put(guild, new LinkedList<String>());
         
         LinkedList<String> list = guildInfoBuf.get(guild);
-        list.add(str);
+        
+        for (String str : strArr)
+            list.add(str);
+        
         trim(list, MAX_INFO);
         guildInfoBuf.put(guild, list);
     }
     
-    public void addSystemInfo(String str) {
-        systemInfoBuf.add(str);
+    public static void sysInfo(String... strArr) {
+        for (String str : strArr)
+            systemInfoBuf.add(str);
+        
         trim(systemInfoBuf, MAX_WARN);
     }
     
-    public void addWarning(String str) {
-        warnBuf.add(str);
-        trim(warnBuf, MAX_WARN);
+    public static void sysWarn(String... strArr) {
+        for (String str : strArr)
+            systemWarnBuf.add(str);
+        
+        trim(systemWarnBuf, MAX_WARN);
     }
     
-    public void addWarning(String message, StackTraceElement[] steArr) {
-        warnBuf.add(message);
+    public static void sysWarn(String message, StackTraceElement[] steArr) {
+        systemWarnBuf.add(message);
         
-        for (StackTraceElement ste : steArr) {
-            warnBuf.push(ste.toString());
-        }
+        for (StackTraceElement ste : steArr)
+            systemWarnBuf.push(ste.toString());
         
-        trim(warnBuf, MAX_WARN);
+        trim(systemWarnBuf, MAX_WARN);
     }
     
-    public LinkedList<String> getGuildInfo(Guild guild) {
+    public static LinkedList<String> getGuildInfo(Guild guild) {
         return new LinkedList<String>(guildInfoBuf.get(guild));
     }
     
-    public LinkedList<String> getSystemInfo() {
+    public static LinkedList<String> getSystemInfo() {
         return new LinkedList<String>(systemInfoBuf);
     }
     
-    public LinkedList<String> getWarnings() {
-        return new LinkedList<String>(warnBuf);
+    public static LinkedList<String> getWarnings() {
+        return new LinkedList<String>(systemWarnBuf);
     }
     
-    private void trim(LinkedList<String> list, int max) {
+    private static void trim(LinkedList<String> list, int max) {
         while (list.size() > max)
             list.pop();
     }

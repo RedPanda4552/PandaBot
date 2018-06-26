@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 
 /**
@@ -58,7 +59,7 @@ public class AdapterSQLite extends AbstractAdapter {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return false;
         }
     }
@@ -74,7 +75,7 @@ public class AdapterSQLite extends AbstractAdapter {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+                LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
                 return null;
             }
         }
@@ -82,14 +83,14 @@ public class AdapterSQLite extends AbstractAdapter {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return null;
         }
         
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbLocation);
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return null;
         }
         
@@ -103,7 +104,7 @@ public class AdapterSQLite extends AbstractAdapter {
         try {
             connection.close();
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
         }
     }
     
@@ -125,7 +126,7 @@ public class AdapterSQLite extends AbstractAdapter {
             PreparedStatement ps = connection.prepareStatement(createBuilder.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
         }
     }
     
@@ -155,7 +156,7 @@ public class AdapterSQLite extends AbstractAdapter {
             PreparedStatement ps = connection.prepareStatement(queryBuilder.toString());
             return ps.executeQuery();
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return null;
         }
     }
@@ -199,7 +200,7 @@ public class AdapterSQLite extends AbstractAdapter {
             
             ps.executeUpdate();
         } catch (SQLException e) {
-            pandaBot.logWarning(e.getMessage(), e.getStackTrace());
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
         }
     }
 }

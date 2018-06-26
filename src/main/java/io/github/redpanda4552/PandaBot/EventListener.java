@@ -48,7 +48,7 @@ public class EventListener extends ListenerAdapter {
         try {
             commandProcessor.process(event.getGuild(), event.getChannel(), event.getMember(), event.getMessage());
         } catch (Throwable t) {
-            pandaBot.logWarning(t.getMessage(), t.getStackTrace());
+            LogBuffer.sysWarn(t.getMessage(), t.getStackTrace());
         }
     }
     
