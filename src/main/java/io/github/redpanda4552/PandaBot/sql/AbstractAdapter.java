@@ -24,22 +24,136 @@
 package io.github.redpanda4552.PandaBot.sql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
 
+import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 
 public abstract class AbstractAdapter {
     
     protected PandaBot pandaBot;
+    protected Connection connection;
     
     public AbstractAdapter(PandaBot pandaBot) {
         this.pandaBot = pandaBot;
     }
     
-    public abstract boolean isConnectionOpen();
+    protected boolean isConnectionOpen() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
+            return false;
+        }
+    }
+    
+    protected void closeConnection() {
+        if (!isConnectionOpen())
+            return;
+        
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
+        }
+    }
+    
+    public void processTable(Table table) {
+        try {
+            StringBuilder createBuilder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
+            createBuilder.append(table.getName())
+                         .append(" (");
+            
+            for (int i = 0; i < table.getColumns().length; i++) {
+                // Ninja trick to avoid comma at start or end
+                if (i != 0)
+                    createBuilder.append(", ");
+                createBuilder.append(table.getColumns()[i])
+                             .append(" varchar(255)");
+            }
+            
+            createBuilder.append(");");
+            PreparedStatement ps = connection.prepareStatement(createBuilder.toString());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
+        }
+    }
+    
+    public ResultSet processQuery(Query query) {
+        if (query.getSelect().size() < 1)
+            return null;
+        if (query.getFrom() == null)
+            return null;
+        
+        try {
+            StringBuilder queryBuilder = new StringBuilder("SELECT ");
+            Iterator<String> iter = query.getSelect().iterator();
+            
+            while (iter.hasNext()) {
+                queryBuilder.append(iter.next());
+                if (iter.hasNext())
+                    queryBuilder.append(", ");
+            }
+            
+            
+            queryBuilder.append(" FROM ")
+                        .append(query.getFrom().getName())
+                        .append(" WHERE ")
+                        .append(query.getWhere())
+                        .append(";");
+            PreparedStatement ps = connection.prepareStatement(queryBuilder.toString());
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
+            return null;
+        }
+    }
+    
+    public void processInsert(Insert insert) {
+        if (insert.getTable() == null)
+            return;
+        if (insert.getValues().length == 0)
+            return;
+        
+        try {
+            StringBuilder insertBuilder = new StringBuilder("INSERT INTO ");
+            insertBuilder.append(insert.getTable().getName())
+                         .append(" (");
+            
+            for (int i = 0; i < insert.getTable().getColumns().length; i++) {
+                // Ninja trick to avoid comma at start or end
+                if (i != 0)
+                    insertBuilder.append(", ");
+                insertBuilder.append(insert.getTable().getColumns()[i]);
+            }
+            
+            insertBuilder.append(") VALUES (");
+            
+            for (int i = 0; i < insert.getValues().length; i++) {
+                // Ninja trick to avoid comma at start or end
+                if (i != 0)
+                    insertBuilder.append(", ");
+                insertBuilder.append("?"); 
+            }
+            
+            insertBuilder.append(");");
+            
+            PreparedStatement ps = connection.prepareStatement(insertBuilder.toString());
+
+            for (int i = 0; i < insert.getValues().length; i++) {
+                // They handle indexing the wrong way, so we have to + 1...
+                ps.setString(i + 1, insert.getValues()[i]);
+            }
+            
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
+        }
+    }
+    
     public abstract Connection openConnection();
-    public abstract void closeConnection();
-    public abstract void processTable(Table table);
-    public abstract ResultSet processQuery(Query query);
-    public abstract void processInsert(Insert insert);
 }
