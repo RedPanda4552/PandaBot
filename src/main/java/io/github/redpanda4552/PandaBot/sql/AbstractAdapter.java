@@ -50,7 +50,7 @@ public abstract class AbstractAdapter {
         }
     }
     
-    protected void closeConnection() {
+    public void closeConnection() {
         if (!isConnectionOpen())
             return;
         
