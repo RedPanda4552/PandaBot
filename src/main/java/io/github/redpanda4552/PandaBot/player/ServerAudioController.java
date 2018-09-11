@@ -23,6 +23,7 @@
  */
 package io.github.redpanda4552.PandaBot.player;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -31,6 +32,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -38,12 +42,15 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import io.github.redpanda4552.PandaBot.PandaBot;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageChannel;
 
 public class ServerAudioController extends AudioEventAdapter implements AudioSendHandler {
+    
+    private final String YOUTUBE_SHORT_URL = "https://youtu.be", YOUTUBE_URL_TIME_PARAM = "t=";
     
     private PandaBot pandaBot;
     private AudioPlayerManager apm;
@@ -52,6 +59,7 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     private MessageChannel lastMessageChannel;
     private LinkedList<AudioTrack> queue;
     private String lastIdentifier;
+    private HashMap<String, Long> startAheadPositions = new HashMap<String, Long>();
     
     public ServerAudioController(PandaBot pandaBot, AudioPlayerManager apm, AudioPlayer ap) {
         this.pandaBot = pandaBot;
@@ -84,10 +92,36 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     public void loadResource(MessageChannel msgChannel, Member member, String identifier) {
         lastMessageChannel = msgChannel;
         
+        if (identifier.startsWith(YOUTUBE_SHORT_URL) && identifier.contains("?" + YOUTUBE_URL_TIME_PARAM)) {
+            String timeStr = identifier.split(YOUTUBE_URL_TIME_PARAM)[1];
+            String[] spl = timeStr.split("h|m|s");
+            int hour = 0, minute = 0, second = 0;
+            
+            for (int i = 0; i < spl.length; i++) {
+                if (timeStr.contains("h") && hour == 0)
+                    hour = Integer.parseInt(spl[i]);
+                else if (timeStr.contains("m") && minute == 0)
+                    minute = Integer.parseInt(spl[i]);
+                else if (timeStr.contains("s") && second == 0)
+                    second = Integer.parseInt(spl[i]);
+            }
+            
+            long positionMS = ((((hour * 60) + minute) * 60) + second) * 1000;
+            startAheadPositions.put(identifier, positionMS);
+        }
+        
         apm.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 if (ap.getPlayingTrack() == null && queue.isEmpty()) {
+                    // Your math teacher was right, you WILL use factoring!
+                    for (String identifier : startAheadPositions.keySet()) {
+                        if (identifier.contains(track.getIdentifier())) {
+                            track.setPosition(startAheadPositions.get(identifier));
+                            startAheadPositions.remove(identifier);
+                            break;
+                        }
+                    }
                     ap.playTrack(track);
                 } else {
                     MessageBuilder mb = new MessageBuilder();
@@ -165,14 +199,19 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        MessageBuilder mb = new MessageBuilder();
-        mb.append("Now playing **")
-          .append(track.getInfo().title)
-          .append("**\n\t**Length:** ")
-          .append(DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"))
-          .append("\t**Channel:** ")
-          .append(track.getInfo().author);
-        pandaBot.sendMessage(lastMessageChannel, mb.build());
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(track.getInfo().title)
+          .setDescription(track.getInfo().uri)
+          .setAuthor("Now Playing")
+          .addField("Channel", track.getInfo().author, true)
+          .addField("Length", DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"), true);
+        if (track.getSourceManager() instanceof YoutubeAudioSourceManager)
+            eb.setColor(0xff0000); // Sampled from the Youtube logo
+        else if (track.getSourceManager() instanceof SoundCloudAudioSourceManager)
+            eb.setColor(0xff5500); // Sampled from the SoundCloud play button
+        else if (track.getSourceManager() instanceof TwitchStreamAudioSourceManager)
+            eb.setColor(0x4b367c);
+        pandaBot.sendMessage(lastMessageChannel, new MessageBuilder().setEmbed(eb.build()).build());
     }
 
     @Override
@@ -217,7 +256,7 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public byte[] provide20MsAudio() {
-        return lastFrame.data;
+        return lastFrame.getData();
     }
     
     @Override
