@@ -204,6 +204,7 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
           .setDescription(track.getInfo().uri)
           .setAuthor("Now Playing")
           .addField("Channel", track.getInfo().author, true)
+          .addField("Starting At", DurationFormatUtils.formatDuration(track.getPosition(), "mm:ss"), true)
           .addField("Length", DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"), true);
         if (track.getSourceManager() instanceof YoutubeAudioSourceManager)
             eb.setColor(0xff0000); // Sampled from the Youtube logo
