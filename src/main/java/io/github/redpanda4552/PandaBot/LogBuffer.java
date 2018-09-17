@@ -72,6 +72,15 @@ public class LogBuffer {
         trim(systemWarnBuf, MAX_WARN);
     }
     
+    public static void sysWarn(Exception e) {
+        systemWarnBuf.add(e.getMessage());
+        
+        for (StackTraceElement ste : e.getStackTrace())
+            systemWarnBuf.push(ste.toString());
+        
+        trim(systemWarnBuf, MAX_WARN);
+    }
+    
     public static LinkedList<String> getGuildInfo(Guild guild) {
         return new LinkedList<String>(guildInfoBuf.get(guild));
     }
