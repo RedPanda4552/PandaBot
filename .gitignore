@@ -6,3 +6,4 @@ JDA-*
 pandabot.xml
 dependency-reduced-pom.xml
 *.db
+reports/
