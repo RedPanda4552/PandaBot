@@ -34,6 +34,7 @@ import io.github.redpanda4552.PandaBot.player.GlobalAudioController;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
 import io.github.redpanda4552.PandaBot.player.ServerAudioController;
 import io.github.redpanda4552.PandaBot.player.YoutubeAPI;
+import io.github.redpanda4552.PandaBot.reporting.GlobalReportManager;
 import io.github.redpanda4552.PandaBot.sql.AbstractAdapter;
 import io.github.redpanda4552.PandaBot.sql.AdapterSQLite;
 import io.github.redpanda4552.PandaBot.sql.TableIndex;
@@ -64,6 +65,7 @@ public class PandaBot {
     private CommandProcessor commandProcessor;
     private GlobalAudioController gac;
     private SelectionTracker st;
+    private GlobalReportManager grm;
     private AbstractAdapter sql;
     
     public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
@@ -110,6 +112,7 @@ public class PandaBot {
             gac.createServerAudioController(guild);
         }
         
+        grm = new GlobalReportManager(jda.getGuilds());
         updateRunningState(RunningState.READY);
         LogBuffer.sysInfo("PandaBot and JDA online and ready!");
     }
@@ -262,6 +265,10 @@ public class PandaBot {
     
     public SelectionTracker getSelectionTracker() {
         return st;
+    }
+    
+    public GlobalReportManager getGlobalReportManager() {
+        return grm;
     }
     
     public AbstractAdapter getSQL() {
