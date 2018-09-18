@@ -55,6 +55,7 @@ public class CommandProcessor {
         commandMap.put("ping", new CommandPing(pandaBot, this));
         commandMap.put("metrics", new CommandMetrics(pandaBot, this));
         commandMap.put("logdump", new CommandLogdump(pandaBot, this));
+        commandMap.put("report", new CommandReport(pandaBot, this));
         // Music
         commandMap.put("play", new CommandPlay(pandaBot, this));
         commandMap.put("replay", new CommandReplay(pandaBot, this));
