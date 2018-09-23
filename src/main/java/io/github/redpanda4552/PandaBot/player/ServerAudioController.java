@@ -32,9 +32,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -43,7 +40,6 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.util.MessageEmbedBuilder;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.Member;
@@ -58,15 +54,14 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     private AudioPlayer ap;
     private AudioFrame lastFrame;
     private MessageChannel lastMessageChannel;
-    private LinkedList<AudioTrack> queue;
-    private String lastIdentifier;
+    private LinkedList<AudioTrack> queue = new LinkedList<AudioTrack>();
+    private LastTrackContainer lastTrack;
     private HashMap<String, Long> startAheadPositions = new HashMap<String, Long>();
     
     public ServerAudioController(PandaBot pandaBot, AudioPlayerManager apm, AudioPlayer ap) {
         this.pandaBot = pandaBot;
         this.apm = apm;
         this.ap = ap;
-        queue = new LinkedList<AudioTrack>();
     }
     
     public AudioPlayer getAudioPlayer() {
@@ -86,11 +81,11 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
         return queue;
     }
     
-    public String getLastIdentifier() {
-        return lastIdentifier;
+    public LastTrackContainer getLastTrack() {
+        return lastTrack;
     }
     
-    public void loadResource(MessageChannel msgChannel, Member member, String identifier) {
+    public void loadResource(MessageChannel msgChannel, Member member, String identifier, boolean isReplay) {
         lastMessageChannel = msgChannel;
         
         if (identifier.startsWith(YOUTUBE_SHORT_URL) && identifier.contains("?" + YOUTUBE_URL_TIME_PARAM)) {
@@ -123,6 +118,10 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
                             break;
                         }
                     }
+                    
+                    if (isReplay && lastTrack != null)
+                        track.setPosition(lastTrack.getStartTime());
+                    
                     ap.playTrack(track);
                 } else {
                     MessageBuilder mb = new MessageBuilder();
@@ -200,6 +199,7 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        lastTrack = new LastTrackContainer(track.getIdentifier(), track.getPosition());
         MessageBuilder mb = new MessageBuilder();
         mb.setEmbed(MessageEmbedBuilder.nowPlayingEmbed(track));
         pandaBot.sendMessage(lastMessageChannel, mb.build());
@@ -207,8 +207,6 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        lastIdentifier = track.getIdentifier();
-        
         if (endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) {
             ap.playTrack(queue.poll());
         } else {

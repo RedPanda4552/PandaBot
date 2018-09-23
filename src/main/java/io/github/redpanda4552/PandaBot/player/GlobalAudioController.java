@@ -82,18 +82,18 @@ public class GlobalAudioController {
     }
     
     public void play(Guild guild, MessageChannel msgChannel, Member member, String identifier) {
-        getServerAudioController(guild).loadResource(msgChannel, member, identifier);
+        getServerAudioController(guild).loadResource(msgChannel, member, identifier, false);
     }
     
     public void replay(Guild guild, MessageChannel msgChannel, Member member) {
-        String identifier = getServerAudioController(guild).getLastIdentifier();
+        String identifier = getServerAudioController(guild).getLastTrack().getIdentifier();
         
         if (identifier == null || identifier.isEmpty()) {
             pandaBot.sendMessage(msgChannel, "Nothing to replay!");
             return;
         }
         
-        play(guild, msgChannel, member, identifier);
+        getServerAudioController(guild).loadResource(msgChannel, member, identifier, true);
     }
     
     public void pause(Guild guild, MessageChannel msgChannel) {
