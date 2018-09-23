@@ -42,6 +42,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import io.github.redpanda4552.PandaBot.PandaBot;
+import io.github.redpanda4552.PandaBot.util.MessageEmbedBuilder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
@@ -199,20 +200,9 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle(track.getInfo().title)
-          .setDescription(track.getInfo().uri)
-          .setAuthor("Now Playing")
-          .addField("Channel", track.getInfo().author, true)
-          .addField("Starting At", DurationFormatUtils.formatDuration(track.getPosition(), "mm:ss"), true)
-          .addField("Length", DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"), true);
-        if (track.getSourceManager() instanceof YoutubeAudioSourceManager)
-            eb.setColor(0xff0000); // Sampled from the Youtube logo
-        else if (track.getSourceManager() instanceof SoundCloudAudioSourceManager)
-            eb.setColor(0xff5500); // Sampled from the SoundCloud play button
-        else if (track.getSourceManager() instanceof TwitchStreamAudioSourceManager)
-            eb.setColor(0x4b367c);
-        pandaBot.sendMessage(lastMessageChannel, new MessageBuilder().setEmbed(eb.build()).build());
+        MessageBuilder mb = new MessageBuilder();
+        mb.setEmbed(MessageEmbedBuilder.nowPlayingEmbed(track));
+        pandaBot.sendMessage(lastMessageChannel, mb.build());
     }
 
     @Override

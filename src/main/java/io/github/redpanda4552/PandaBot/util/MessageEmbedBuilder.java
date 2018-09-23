@@ -25,6 +25,13 @@ package io.github.redpanda4552.PandaBot.util;
 
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -42,7 +49,7 @@ public class MessageEmbedBuilder {
      * @return A MessageEmbed representation of the Message parameter, or null
      * if null passed in.
      */
-    public static MessageEmbed build(Message message) {
+    public static MessageEmbed messageAsEmbed(Message message) {
         if (message == null)
             return null;
         
@@ -60,6 +67,23 @@ public class MessageEmbedBuilder {
         // date and time. So screw it, the one liner hack wins.
         eb.addField("Date (US Eastern)", message.getCreationTime().minusHours(4).format(DateTimeFormatter.ISO_LOCAL_DATE), true);
         eb.addField("Time (US Eastern)", message.getCreationTime().minusHours(4).format(DateTimeFormatter.ISO_LOCAL_TIME), true);
+        return eb.build();
+    }
+    
+    public static MessageEmbed nowPlayingEmbed(AudioTrack track) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(track.getInfo().title)
+          .setDescription(track.getInfo().uri)
+          .setAuthor("Now Playing")
+          .addField("Channel", track.getInfo().author, true)
+          .addField("Starting At", DurationFormatUtils.formatDuration(track.getPosition(), "mm:ss"), true)
+          .addField("Length", DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"), true);
+        if (track.getSourceManager() instanceof YoutubeAudioSourceManager)
+            eb.setColor(0xff0000); // Sampled from the Youtube logo
+        else if (track.getSourceManager() instanceof SoundCloudAudioSourceManager)
+            eb.setColor(0xff5500); // Sampled from the SoundCloud play button
+        else if (track.getSourceManager() instanceof TwitchStreamAudioSourceManager)
+            eb.setColor(0x4b367c);
         return eb.build();
     }
 }

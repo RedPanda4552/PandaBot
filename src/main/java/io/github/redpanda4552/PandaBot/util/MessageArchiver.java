@@ -47,6 +47,6 @@ public class MessageArchiver {
             archiveChannel = channels.get(0);
         }
         
-        archiveChannel.sendMessage(MessageEmbedBuilder.build(message)).complete();
+        archiveChannel.sendMessage(MessageEmbedBuilder.messageAsEmbed(message)).complete();
     }
 }
