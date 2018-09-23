@@ -24,10 +24,15 @@
 package io.github.redpanda4552.PandaBot.commands.general;
 
 import java.awt.Color;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import io.github.redpanda4552.PandaBot.CommandProcessor;
+import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -44,9 +49,18 @@ public class CommandMetrics extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
+        String version = "Error reading pom.xml";
+        
+        try {
+            version = new MavenXpp3Reader().read(new FileReader("pom.xml")).getVersion();
+        } catch (IOException | XmlPullParserException e) {
+            LogBuffer.sysWarn(e);
+        }
+        
         MessageBuilder mb = new MessageBuilder();
         EmbedBuilder eb = new EmbedBuilder()
           .setTitle("PandaBot Metrics")
+          .addField("Version", version, true)
           .addField("Uptime", DurationFormatUtils.formatDuration(pandaBot.getRunningTime(), "d:HH:mm:ss"), true)
           .addField("Servers", String.valueOf(pandaBot.getServerCount()), true)
           .addField("Users", String.valueOf(pandaBot.getUserCount()), true)
