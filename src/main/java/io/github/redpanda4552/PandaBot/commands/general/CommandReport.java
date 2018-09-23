@@ -46,16 +46,7 @@ public class CommandReport extends AbstractCommand {
         ServerReportManager srm = pandaBot.getGlobalReportManager().getServerReportManager(guild);
         File[] reportFiles = srm.getReportFiles();
         
-        if (args.length == 0) {
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setAuthor("Report Files");
-            eb.setDescription("Use \"!report <report name> <hours>\" where <report name> is the full name as displayed in the below list, and <hours> is the number of hours back in time you would like to analyze:");
-            
-            for (File reportFile : reportFiles)
-                if (!reportFile.getName().equals("template.report")) eb.addField(reportFile.getName(), "", true);
-            
-            pandaBot.sendMessage(msgChannel, new MessageBuilder().setEmbed(eb.build()).build());
-        } else if (args.length == 2) {
+        if (args.length == 2) {
             for (File reportFile : reportFiles) {
                 if (reportFile.getName().equalsIgnoreCase(args[0])) {
                     try {
@@ -66,7 +57,18 @@ public class CommandReport extends AbstractCommand {
                     }
                 }
             }
-        }
+        } else {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setAuthor("Report Usage:");
+            eb.setDescription("!report <report name> <hours>\n\n");
+            eb.appendDescription("<report name> - The full name of the report as listed below.\n");
+            eb.appendDescription("<hours> - Number of hours back to look at messages.\n");
+            
+            for (File reportFile : reportFiles)
+                if (!reportFile.getName().equals("template.report")) eb.addField(reportFile.getName(), "", true);
+            
+            pandaBot.sendMessage(msgChannel, new MessageBuilder().setEmbed(eb.build()).build());
+        } 
     }
 
     @Override
