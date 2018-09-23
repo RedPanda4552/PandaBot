@@ -36,7 +36,7 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 
 public class CommandLogdump extends AbstractCommand {
 
-    private final int CHAR_LIMIT = 1950;
+    private final int CHAR_LIMIT = 2000;
     
     public CommandLogdump(PandaBot pandaBot, CommandProcessor commandProcessor) {
         super(pandaBot, commandProcessor);
