@@ -90,7 +90,7 @@ public class ServerReportManager {
     
     public void runNow(File reportFile, MessageChannel outputChannel, int hours) {
         pandaBot.sendMessage(outputChannel, "Running a report... Depending on how many messages there are and how long you specified, this may take a while...");
-        timer.schedule(new ReportTask(reportFile, outputChannel, hours), 10);
+        new ReportTask(reportFile, outputChannel, hours).run();
     }
     
     public File[] getReportFiles() {
