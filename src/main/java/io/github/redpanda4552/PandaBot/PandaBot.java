@@ -145,8 +145,12 @@ public class PandaBot {
         sql.closeConnection();
         jda.shutdown();
         
-        if (reload)
+        if (reload) {
             Main.reinstance();
+        } else {
+            System.exit(0);
+        }
+            
     }
     
     /**
