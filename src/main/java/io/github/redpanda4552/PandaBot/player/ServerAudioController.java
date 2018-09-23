@@ -109,19 +109,19 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
         apm.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                if (ap.getPlayingTrack() == null && queue.isEmpty()) {
-                    // Your math teacher was right, you WILL use factoring!
-                    for (String identifier : startAheadPositions.keySet()) {
-                        if (identifier.contains(track.getIdentifier())) {
-                            track.setPosition(startAheadPositions.get(identifier));
-                            startAheadPositions.remove(identifier);
-                            break;
-                        }
+                // Your math teacher was right, you WILL use factoring!
+                for (String identifier : startAheadPositions.keySet()) {
+                    if (identifier.contains(track.getIdentifier())) {
+                        track.setPosition(startAheadPositions.get(identifier));
+                        startAheadPositions.remove(identifier);
+                        break;
                     }
-                    
-                    if (isReplay && lastTrack != null)
-                        track.setPosition(lastTrack.getStartTime());
-                    
+                }
+                
+                if (isReplay && lastTrack != null)
+                    track.setPosition(lastTrack.getStartTime());
+                
+                if (ap.getPlayingTrack() == null && queue.isEmpty()) {
                     ap.playTrack(track);
                 } else {
                     MessageBuilder mb = new MessageBuilder();
