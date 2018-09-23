@@ -33,7 +33,6 @@ import java.util.Timer;
 
 import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
-import io.github.redpanda4552.PandaBot.util.ReportTask;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;

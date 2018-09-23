@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.redpanda4552.PandaBot.util;
+package io.github.redpanda4552.PandaBot.reporting;
 
 import java.io.BufferedReader;
 import java.io.File;
