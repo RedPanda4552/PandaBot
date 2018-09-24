@@ -58,6 +58,16 @@ public class CommandLogdump extends AbstractCommand {
         }
         
         Iterator<String> iterator = LogBuffer.getGuildInfo(guild).iterator();
+        
+        if (args.length >= 2 && pandaBot.memberIsSuperuser(member)) {
+            if (args[1].equalsIgnoreCase("syswarn")) {
+                iterator = LogBuffer.getWarnings().iterator();
+            } else if (args[1].equalsIgnoreCase("sysinfo")) {
+                iterator = LogBuffer.getSystemInfo().iterator();
+            }
+            
+        }
+        
         int page = 1;
         mb.append("```ini\n")
           .append("[PandaBot Logdump Page ")
