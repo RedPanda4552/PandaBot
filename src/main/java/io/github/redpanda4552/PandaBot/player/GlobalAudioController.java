@@ -25,9 +25,6 @@ package io.github.redpanda4552.PandaBot.player;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-
-import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -36,7 +33,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import io.github.redpanda4552.PandaBot.PandaBot;
-import io.github.redpanda4552.PandaBot.util.TrackEmbedBuilder;
+import io.github.redpanda4552.PandaBot.util.MessageEmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -82,53 +79,45 @@ public class GlobalAudioController {
     }
     
     public void play(Guild guild, MessageChannel msgChannel, Member member, String identifier) {
-        getServerAudioController(guild).loadResource(msgChannel, member, identifier, false);
+        ServerAudioController sac = getServerAudioController(guild);
+        sac.lastCommand = member;
+        sac.loadResource(msgChannel, member, identifier, false);
     }
     
     public void replay(Guild guild, MessageChannel msgChannel, Member member) {
-        String identifier = getServerAudioController(guild).getLastTrack().getIdentifier();
+        ServerAudioController sac = getServerAudioController(guild);
+        sac.lastCommand = member;
+        String identifier = sac.getLastTrack().getIdentifier();
         
         if (identifier == null || identifier.isEmpty()) {
             pandaBot.sendMessage(msgChannel, "Nothing to replay!");
             return;
         }
         
-        getServerAudioController(guild).loadResource(msgChannel, member, identifier, true);
+        sac.loadResource(msgChannel, member, identifier, true);
     }
     
-    public void pause(Guild guild, MessageChannel msgChannel) {
-        AudioPlayer ap = getServerAudioController(guild).getAudioPlayer();
+    public void pause(Guild guild, MessageChannel msgChannel, Member member) {
+        ServerAudioController sac = getServerAudioController(guild);
+        sac.lastCommand = member;
+        AudioPlayer ap = sac.getAudioPlayer();
         ap.setPaused(!ap.isPaused());
     }
     
-    public void skip(Guild guild, MessageChannel msgChannel) {
-        AudioPlayer ap = getServerAudioController(guild).getAudioPlayer();
-        AudioTrack at = ap.getPlayingTrack();
-        
-        if (at == null) {
-            pandaBot.sendMessage(msgChannel, "Nothing to skip!");
-            return;
-        }
-        
-        ap.stopTrack();
-        MessageBuilder mb = new MessageBuilder();
-        mb.append("Skipping current track **");
-        mb.append(at.getInfo().title);
-        mb.append("**");
-        pandaBot.sendMessage(msgChannel, mb.build());
-    }
-    
-    public void stop(Guild guild, MessageChannel msgChannel) {
+    public void skip(Guild guild, MessageChannel msgChannel, Member member) {
         ServerAudioController sac = getServerAudioController(guild);
-        MessageBuilder mb = new MessageBuilder();
-        mb.append("Cleared **");
-        mb.append(sac.emptyQueue());
-        mb.append("** tracks from the queue.");
-        pandaBot.sendMessage(msgChannel, mb.build());
-        skip(guild, msgChannel);
+        sac.lastCommand = member;
+        sac.getAudioPlayer().stopTrack();
     }
     
-    public void nowPlaying(Guild guild, MessageChannel msgChannel) {
+    public void stop(Guild guild, MessageChannel msgChannel, Member member) {
+        ServerAudioController sac = getServerAudioController(guild);
+        sac.lastCommand = member;
+        sac.emptyQueue(member);
+        skip(guild, msgChannel, member);
+    }
+    
+    public void nowPlaying(Guild guild, MessageChannel msgChannel, Member member) {
         AudioTrack at = getServerAudioController(guild).getAudioPlayer().getPlayingTrack();
         
         if (at == null) {
@@ -137,35 +126,15 @@ public class GlobalAudioController {
         }
         
         MessageBuilder mb = new MessageBuilder();
-        mb.setEmbed(TrackEmbedBuilder.buildFor(at));
+        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.PLAY, at, member));
         pandaBot.sendMessage(msgChannel, mb.build());
     }
     
-    public void queue(Guild guild, MessageChannel msgChannel) {
-        LinkedList<AudioTrack> queue = getServerAudioController(guild).getQueue();
-        
-        if (queue.isEmpty()) {
-            pandaBot.sendMessage(msgChannel, "The queue is empty!");
-            return;
-        }
-        
+    public void queue(Guild guild, MessageChannel msgChannel, Member member) {
+        ServerAudioController sac = getServerAudioController(guild);
+        sac.lastCommand = member;
         MessageBuilder mb = new MessageBuilder();
-        mb.append("Queued tracks:\n");
-        int i = 1;
-        
-        for (AudioTrack at : queue) {
-            mb.append("\t**")
-              .append(i)
-              .append(":** ")
-              .append(at.getInfo().title)
-              .append("\n\t\t**Length:** ")
-              .append(DurationFormatUtils.formatDuration(at.getDuration(), "mm:ss"))
-              .append("\t**Channel:** ")
-              .append(at.getInfo().author)
-              .append("\n");
-            i++;
-        }
-        
+        mb.setEmbed(MessageEmbedBuilder.playerQueueContentsEmbed(sac.getQueue(), member));
         pandaBot.sendMessage(msgChannel, mb.build());
     }
 }

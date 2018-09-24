@@ -38,7 +38,7 @@ public class CommandQueue extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().queue(guild, msgChannel);
+        pandaBot.getGlobalAudioController().queue(guild, msgChannel, member);
     }
 
     @Override

@@ -36,6 +36,7 @@ import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
 import io.github.redpanda4552.PandaBot.player.YoutubeAPI;
+import io.github.redpanda4552.PandaBot.util.MessageEmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -102,7 +103,9 @@ public class CommandPlay extends AbstractCommand {
             }
             
             if (ap.getTracks().isEmpty()) {
-                pandaBot.sendMessage(msgChannel, String.format("No results for search **%s**.", search));
+                MessageBuilder mb = new MessageBuilder();
+                mb.setEmbed(MessageEmbedBuilder.playerNoMatchesEmbed(search, member));
+                pandaBot.sendMessage(msgChannel, mb.build());
                 return;
             }
             

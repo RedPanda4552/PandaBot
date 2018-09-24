@@ -21,39 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.redpanda4552.PandaBot.commands.music;
+package io.github.redpanda4552.PandaBot.util;
 
-import io.github.redpanda4552.PandaBot.CommandProcessor;
-import io.github.redpanda4552.PandaBot.PandaBot;
-import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
+public class MarkdownFilter {
 
-public class CommandStop extends AbstractCommand {
-
-    public CommandStop(PandaBot pandaBot, CommandProcessor commandProcessor) {
-        super(pandaBot, commandProcessor);
+    public static String clean(String str) {
+        return str.replace("*", "\\*").replace("_", "\\_").replace("`", "\\`");
     }
-
-    @Override
-    public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().stop(guild, msgChannel, member);
-    }
-
-    @Override
-    public String getHelpArgs() {
-        return "";
-    }
-
-    @Override
-    public String getHelpMessage() {
-        return "Empty the queue and stop the current track.";
-    }
-
-    @Override
-    public CommandType getCommandType() {
-        return CommandType.MUSIC;
-    }
-
+    
 }

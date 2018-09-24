@@ -38,7 +38,7 @@ public class CommandPause extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().pause(guild, msgChannel);
+        pandaBot.getGlobalAudioController().pause(guild, msgChannel, member);
     }
 
     @Override

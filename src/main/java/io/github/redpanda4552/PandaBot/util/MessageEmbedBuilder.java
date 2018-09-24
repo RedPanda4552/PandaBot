@@ -24,16 +24,21 @@
 package io.github.redpanda4552.PandaBot.util;
 
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import io.github.redpanda4552.PandaBot.player.PlayerAction;
+import io.github.redpanda4552.PandaBot.player.QueueElement;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
@@ -70,13 +75,15 @@ public class MessageEmbedBuilder {
         return eb.build();
     }
     
-    public static MessageEmbed nowPlayingEmbed(AudioTrack track) {
+    public static MessageEmbed playerEmbed(PlayerAction action, AudioTrack track, Member member) {
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle(track.getInfo().title)
-          .setDescription(track.getInfo().uri)
-          .setAuthor("Now Playing")
+        eb.setTitle(action.getDisplayText())
+          .setDescription(MarkdownFilter.clean(track.getInfo().title))
+          .appendDescription("\n")
+          .appendDescription(MarkdownFilter.clean(track.getInfo().uri))
+          .setFooter(member.getEffectiveName(), member.getUser().getAvatarUrl())
           .addField("Channel", track.getInfo().author, true)
-          .addField("Starting At", DurationFormatUtils.formatDuration(track.getPosition(), "mm:ss"), true)
+          .addField("Position", DurationFormatUtils.formatDuration(track.getPosition(), "mm:ss"), true)
           .addField("Length", DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"), true);
         if (track.getSourceManager() instanceof YoutubeAudioSourceManager)
             eb.setColor(0xff0000); // Sampled from the Youtube logo
@@ -84,6 +91,48 @@ public class MessageEmbedBuilder {
             eb.setColor(0xff5500); // Sampled from the SoundCloud play button
         else if (track.getSourceManager() instanceof TwitchStreamAudioSourceManager)
             eb.setColor(0x4b367c);
+        return eb.build();
+    }
+    
+    public static MessageEmbed playerQueueContentsEmbed(LinkedList<QueueElement> queue, Member member) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Queue")
+          .setDescription(queue.size() + " tracks queued.")
+          .setFooter(member.getEffectiveName(), member.getUser().getAvatarUrl());
+        
+        for (QueueElement element : queue) {
+            AudioTrack track = element.getAudioTrack();
+            eb.addField(MarkdownFilter.clean(track.getInfo().title), MarkdownFilter.clean(track.getInfo().author), false);
+        }
+        
+        return eb.build();
+    }
+    
+    public static MessageEmbed playerQueueEmptiedEmbed(LinkedList<QueueElement> queue, Member member) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Queue Emptied")
+          .setDescription(queue.size() + " tracks removed.")
+          .setFooter(member.getEffectiveName(), member.getUser().getAvatarUrl());
+        
+        for (QueueElement element : queue)
+            eb.addField(element.getAudioTrack().getInfo().title, element.getAudioTrack().getInfo().uri, true);
+        
+        return eb.build();
+    }
+    
+    public static MessageEmbed playerNoMatchesEmbed(String identifier, Member member) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("No Matches")
+          .setDescription("No matches found for \"" + MarkdownFilter.clean(identifier) + "\"")
+          .setFooter(member.getEffectiveName(), member.getUser().getAvatarUrl());
+        return eb.build();
+    }
+    
+    public static MessageEmbed playerLoadFailed(FriendlyException e, Member member) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Load Failed")
+          .setDescription(MarkdownFilter.clean(e.getMessage()))
+          .setFooter(member.getEffectiveName(), member.getUser().getAvatarUrl());
         return eb.build();
     }
 }

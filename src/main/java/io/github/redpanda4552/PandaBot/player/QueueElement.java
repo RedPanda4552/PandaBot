@@ -21,39 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.github.redpanda4552.PandaBot.commands.music;
+package io.github.redpanda4552.PandaBot.player;
 
-import io.github.redpanda4552.PandaBot.CommandProcessor;
-import io.github.redpanda4552.PandaBot.PandaBot;
-import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
-import net.dv8tion.jda.core.entities.Guild;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
 
-public class CommandStop extends AbstractCommand {
+public class QueueElement {
 
-    public CommandStop(PandaBot pandaBot, CommandProcessor commandProcessor) {
-        super(pandaBot, commandProcessor);
+    private AudioTrack track;
+    private Member member;
+    
+    public QueueElement(AudioTrack track, Member member) {
+        this.track = track;
+        this.member = member;
     }
-
-    @Override
-    public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().stop(guild, msgChannel, member);
+    
+    public AudioTrack getAudioTrack() {
+        return track;
     }
-
-    @Override
-    public String getHelpArgs() {
-        return "";
+    
+    public Member getMember() {
+        return member;
     }
-
-    @Override
-    public String getHelpMessage() {
-        return "Empty the queue and stop the current track.";
-    }
-
-    @Override
-    public CommandType getCommandType() {
-        return CommandType.MUSIC;
-    }
-
 }

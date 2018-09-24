@@ -38,7 +38,7 @@ public class CommandNowplaying extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().nowPlaying(guild, msgChannel);
+        pandaBot.getGlobalAudioController().nowPlaying(guild, msgChannel, member);
     }
 
     @Override

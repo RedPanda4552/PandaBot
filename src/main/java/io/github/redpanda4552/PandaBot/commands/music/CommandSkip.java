@@ -38,7 +38,7 @@ public class CommandSkip extends AbstractCommand {
 
     @Override
     public void execute(Guild guild, MessageChannel msgChannel, Member member, String[] args) {
-        pandaBot.getGlobalAudioController().skip(guild, msgChannel);
+        pandaBot.getGlobalAudioController().skip(guild, msgChannel, member);
     }
 
     @Override

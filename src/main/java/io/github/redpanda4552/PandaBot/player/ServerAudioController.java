@@ -26,8 +26,6 @@ package io.github.redpanda4552.PandaBot.player;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -54,9 +52,15 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     private AudioPlayer ap;
     private AudioFrame lastFrame;
     private MessageChannel lastMessageChannel;
-    private LinkedList<AudioTrack> queue = new LinkedList<AudioTrack>();
+    private LinkedList<QueueElement> queue = new LinkedList<QueueElement>();
     private LastTrackContainer lastTrack;
     private HashMap<String, Long> startAheadPositions = new HashMap<String, Long>();
+    
+    /**
+     * Used to track Members who execute these commands, so we can put their
+     * names on the message embeds
+     */
+    public Member lastCommand;
     
     public ServerAudioController(PandaBot pandaBot, AudioPlayerManager apm, AudioPlayer ap) {
         this.pandaBot = pandaBot;
@@ -69,15 +73,16 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     }
     
     /**
-     * Clear the queue and return the number of items removed.
+     * Clear the queue
      */
-    public int emptyQueue() {
-        int ret = queue.size();
+    public void emptyQueue(Member member) {
+        MessageBuilder mb = new MessageBuilder();
+        mb.setEmbed(MessageEmbedBuilder.playerQueueEmptiedEmbed(queue, member));
         queue.clear();
-        return ret;
+        pandaBot.sendMessage(lastMessageChannel, mb.build());
     }
     
-    public LinkedList<AudioTrack> getQueue() {
+    public LinkedList<QueueElement> getQueue() {
         return queue;
     }
     
@@ -126,20 +131,10 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
                 } else {
                     MessageBuilder mb = new MessageBuilder();
                     
-                    if (queue.add(track)) {
-                        mb.append("Adding to queue: **")
-                          .append(track.getInfo().title)
-                          .append("**\n\t**Length:** ")
-                          .append(DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"))
-                          .append("\t**Channel:** ")
-                          .append(track.getInfo().author);
+                    if (queue.add(new QueueElement(track, member))) {
+                        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.QUEUE, track, member));
                     } else {
-                        mb.append("Failed to queue: **")
-                          .append(track.getInfo().title)
-                          .append("**\n\t**Length:** ")
-                          .append(DurationFormatUtils.formatDuration(track.getDuration(), "mm:ss"))
-                          .append("\t**Channel:** ")
-                          .append(track.getInfo().author);
+                        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.QUEUE_FAIL, track, member));
                     }
                     
                     pandaBot.sendMessage(msgChannel, mb.build());
@@ -155,17 +150,14 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
             @Override
             public void noMatches() {
                 MessageBuilder mb = new MessageBuilder();
-                mb.append(member.getAsMention())
-                  .append(" **")
-                  .append(identifier)
-                  .append("** returned no matches.");
+                mb.setEmbed(MessageEmbedBuilder.playerNoMatchesEmbed(identifier, member));
                 pandaBot.sendMessage(msgChannel, mb.build());
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
                 MessageBuilder mb = new MessageBuilder();
-                mb.append(e.getMessage());
+                mb.setEmbed(MessageEmbedBuilder.playerLoadFailed(e, member));
                 pandaBot.sendMessage(msgChannel, mb.build());
             }
         });
@@ -174,26 +166,14 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     @Override
     public void onPlayerPause(AudioPlayer player) {
         MessageBuilder mb = new MessageBuilder();
-        mb.append("Paused **")
-          .append(player.getPlayingTrack().getInfo().title)
-          .append("**")
-          .append("\n**\tTime:** ")
-          .append(DurationFormatUtils.formatDuration(player.getPlayingTrack().getPosition(), "mm:ss"))
-          .append("\t**Channel:** ")
-          .append(player.getPlayingTrack().getInfo().author);
+        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.PAUSE, player.getPlayingTrack(), lastCommand));
         pandaBot.sendMessage(lastMessageChannel, mb.build());
     }
 
     @Override
     public void onPlayerResume(AudioPlayer player) {
         MessageBuilder mb = new MessageBuilder();
-        mb.append("Resumed **")
-          .append(player.getPlayingTrack().getInfo().title)
-          .append("**")
-          .append("\n**\tTime:** ")
-          .append(DurationFormatUtils.formatDuration(player.getPlayingTrack().getPosition(), "mm:ss"))
-          .append("\t**Channel:** ")
-          .append(player.getPlayingTrack().getInfo().author);
+        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.RESUME, player.getPlayingTrack(), lastCommand));
         pandaBot.sendMessage(lastMessageChannel, mb.build());
     }
 
@@ -201,26 +181,25 @@ public class ServerAudioController extends AudioEventAdapter implements AudioSen
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         lastTrack = new LastTrackContainer(track.getIdentifier(), track.getPosition());
         MessageBuilder mb = new MessageBuilder();
-        mb.setEmbed(MessageEmbedBuilder.nowPlayingEmbed(track));
+        mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.PLAY, track, lastCommand));
         pandaBot.sendMessage(lastMessageChannel, mb.build());
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        if (endReason == AudioTrackEndReason.STOPPED) {
+            MessageBuilder mb = new MessageBuilder();
+            mb.setEmbed(MessageEmbedBuilder.playerEmbed(PlayerAction.SKIP, track, lastCommand));
+            pandaBot.sendMessage(lastMessageChannel, mb.build());
+        }
+        
         if (endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) {
-            ap.playTrack(queue.poll());
-        } else {
             if (!queue.isEmpty()) {
-                emptyQueue();
+                QueueElement element = queue.poll();
+                lastCommand = element.getMember();
+                ap.playTrack(element.getAudioTrack());
             }
         }
-
-        // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
-        // endReason == LOAD_FAILED: Loading of a track failed (mayStartNext = true).
-        // endReason == STOPPED: The player was stopped.
-        // endReason == REPLACED: Another track started playing while this had not finished
-        // endReason == CLEANUP: Player hasn't been queried for a while, if you want you can put a
-        //                       clone of this back to your queue
     }
 
     @Override
