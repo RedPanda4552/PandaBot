@@ -24,8 +24,10 @@
 package io.github.redpanda4552.PandaBot.commands.general;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -52,7 +54,11 @@ public class CommandMetrics extends AbstractCommand {
         String version = "Error reading pom.xml";
         
         try {
-            version = new MavenXpp3Reader().read(new FileReader("pom.xml")).getVersion();
+            if (new File("pom.xml").exists()) {
+                version = new MavenXpp3Reader().read(new FileReader("pom.xml")).getVersion();
+            } else {
+                version = new MavenXpp3Reader().read(new InputStreamReader(CommandMetrics.class.getResourceAsStream("/META-INF/maven/io.github.redpanda4552/PandaBot/pom.xml"))).getVersion();
+            }
         } catch (IOException | XmlPullParserException e) {
             LogBuffer.sysWarn(e);
         }
