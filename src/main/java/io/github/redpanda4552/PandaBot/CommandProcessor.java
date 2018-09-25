@@ -50,6 +50,7 @@ public class CommandProcessor {
         commandMap = new HashMap<String, AbstractCommand>();
         // General
         commandMap.put("echo", new CommandEcho(pandaBot, this));
+        commandMap.put("f", new CommandF(pandaBot, this));
         commandMap.put("nsfw", new CommandNSFW(pandaBot, this));
         commandMap.put("lmgtfy", new CommandLmgtfy(pandaBot, this));
         commandMap.put("ping", new CommandPing(pandaBot, this));
