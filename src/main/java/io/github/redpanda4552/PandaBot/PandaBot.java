@@ -95,7 +95,7 @@ public class PandaBot {
                     .setToken(token)
                     .setAutoReconnect(true)
                     .addEventListener(new EventListener(this, commandProcessor))
-                    .buildBlocking();
+                    .build().awaitReady();
         } catch (LoginException | IllegalArgumentException | InterruptedException e) {
             LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return;
