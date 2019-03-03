@@ -30,7 +30,6 @@ import javax.security.auth.login.LoginException;
 
 import com.mashape.unirest.http.Unirest;
 
-import io.github.redpanda4552.PandaBot.config.Config;
 import io.github.redpanda4552.PandaBot.player.GlobalAudioController;
 import io.github.redpanda4552.PandaBot.player.SelectionTracker;
 import io.github.redpanda4552.PandaBot.player.ServerAudioController;
@@ -60,9 +59,8 @@ public class PandaBot {
     }
     
     private final long startTime;
+    private final String superuserId;
     
-    private String superuserId;
-    private Config config;
     private JDA jda;
     private CommandProcessor commandProcessor;
     private GlobalAudioController gac;
@@ -70,23 +68,11 @@ public class PandaBot {
     private GlobalReportManager grm;
     private AbstractAdapter sql;
     
-    public PandaBot(Logger log) {
+    public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
         startTime = System.currentTimeMillis();
         self = this;
-        config = new Config();
-        
-        if (config.getString("discord-bot-token").isEmpty()) {
-            System.err.println("Required config field \"discord-bot-token\" is missing! Exiting...");
-            return;
-        }
-        
-        if (config.getString("superuser-id").isEmpty()) {
-            System.err.println("Required config field \"superuser-id\" is missing! Exiting...");
-            return;
-        }
-        
-        this.superuserId = config.getString("superuser-id");
-        init(config.getString("discord-bot-token"), config.getString("youtube-api-key"));
+        this.superuserId = superuserId;
+        init(token, youtubeApiKey);
     }
     
     /**
@@ -238,10 +224,6 @@ public class PandaBot {
         if (guild.getAudioManager().isConnected()) {
             guild.getAudioManager().closeAudioConnection();
         }
-    }
-    
-    public Config getConfig() {
-        return config;
     }
     
     /**
