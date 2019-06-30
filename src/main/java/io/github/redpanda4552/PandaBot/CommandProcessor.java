@@ -113,6 +113,7 @@ public class CommandProcessor {
             
             if (hasPermission) {
                 commandExecutions++;
+                message.delete().complete();
                 ac.execute(guild, msgChannel, member, args);
             }
             
