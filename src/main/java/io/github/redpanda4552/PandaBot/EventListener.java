@@ -61,7 +61,9 @@ public class EventListener extends ListenerAdapter {
             
             while ((in = reader.readLine()) != null) {
                 String[] pair = in.split(":");
-                autoReplyMap.put(pair[0], pair[1]);
+                
+                if (pair.length == 2)
+                    autoReplyMap.put(pair[0], pair[1]);
             }
             
             reader.close();
