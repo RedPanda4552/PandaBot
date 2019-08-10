@@ -23,6 +23,12 @@
  */
 package io.github.redpanda4552.PandaBot;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+
 import io.github.redpanda4552.PandaBot.util.MessageArchiver;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -37,14 +43,42 @@ public class EventListener extends ListenerAdapter {
 
     private PandaBot pandaBot;
     private CommandProcessor commandProcessor;
+    private HashMap<String, String> autoReplyMap = new HashMap<String, String>();
     
     public EventListener(PandaBot pandaBot, CommandProcessor commandProcessor) {
         this.pandaBot = pandaBot;
         this.commandProcessor = commandProcessor;
+        
+        File file = new File("autoreply.txt");
+        
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String in;
+            
+            while ((in = reader.readLine()) != null) {
+                String[] pair = in.split(":");
+                autoReplyMap.put(pair[0], pair[1]);
+            }
+            
+            reader.close();
+        } catch (IOException e) {
+            LogBuffer.sysWarn(e);
+        }
     }
     
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        for (String str : autoReplyMap.keySet()) {
+            if (event.getMessage().getContentDisplay().equals(str)) {
+                pandaBot.sendMessage(event.getChannel(), autoReplyMap.get(str));
+                return;
+            }
+        }
+        
         try {
             commandProcessor.process(event.getGuild(), event.getChannel(), event.getMember(), event.getMessage());
         } catch (Throwable t) {
