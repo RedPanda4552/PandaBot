@@ -23,86 +23,29 @@
  */
 package io.github.redpanda4552.PandaBot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-
 import io.github.redpanda4552.PandaBot.util.MessageArchiver;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class EventListener extends ListenerAdapter {
 
     private PandaBot pandaBot;
     private CommandProcessor commandProcessor;
-    private HashMap<String, String> autoReplyMap = new HashMap<String, String>();
     
     public EventListener(PandaBot pandaBot, CommandProcessor commandProcessor) {
         this.pandaBot = pandaBot;
         this.commandProcessor = commandProcessor;
-        
-        File file = new File("autoreply.txt");
-        
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String in;
-            
-            while ((in = reader.readLine()) != null) {
-                String[] pair = in.split(":");
-                
-                if (pair.length == 2)
-                    autoReplyMap.put(pair[0], pair[1]);
-            }
-            
-            reader.close();
-        } catch (IOException e) {
-            LogBuffer.sysWarn(e);
-        }
     }
     
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        for (String str : autoReplyMap.keySet()) {
-            if (event.getMessage().getContentDisplay().equals(str)) {
-                pandaBot.sendMessage(event.getChannel(), autoReplyMap.get(str));
-                return;
-            }
-        }
-        
         try {
             commandProcessor.process(event.getGuild(), event.getChannel(), event.getMember(), event.getMessage());
         } catch (Throwable t) {
             LogBuffer.sysWarn(t.getMessage(), t.getStackTrace());
-        }
-    }
-    
-    @Override
-    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        VoiceChannel vc = event.getChannelLeft();
-        
-        if (vc.getMembers().size() == 1 && vc.getMembers().get(0).getUser().getId().equals(pandaBot.getBotId())) {
-            pandaBot.leaveVoiceChannel(event.getGuild());
-        }
-    }
-    
-    @Override
-    public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        VoiceChannel vc = event.getChannelLeft();
-        
-        if (vc.getMembers().size() == 1 && vc.getMembers().get(0).getUser().getId().equals(pandaBot.getBotId())) {
-            pandaBot.leaveVoiceChannel(event.getGuild());
         }
     }
     

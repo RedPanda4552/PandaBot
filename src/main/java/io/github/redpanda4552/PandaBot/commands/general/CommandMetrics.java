@@ -37,11 +37,11 @@ import io.github.redpanda4552.PandaBot.CommandProcessor;
 import io.github.redpanda4552.PandaBot.LogBuffer;
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class CommandMetrics extends AbstractCommand {
 
@@ -71,7 +71,6 @@ public class CommandMetrics extends AbstractCommand {
           .addField("Servers", String.valueOf(pandaBot.getServerCount()), true)
           .addField("Users", String.valueOf(pandaBot.getUserCount()), true)
           .addField("Message Channels", String.valueOf(pandaBot.getTextChannelCount()), true)
-          .addField("Active Audio Players", String.valueOf(pandaBot.getVoiceChannelPlayingCount()), true)
           .addField("Command Executions/Attempts", String.format("%d/%d", pandaBot.getCommandProcessor().getCommandExecutions(), pandaBot.getCommandProcessor().getCommandAttempts()), true)
           .setColor(new Color(20, 210, 45));
         mb.setEmbed(eb.build());

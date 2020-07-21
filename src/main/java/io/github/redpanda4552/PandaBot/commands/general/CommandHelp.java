@@ -29,10 +29,10 @@ import java.util.TreeSet;
 import io.github.redpanda4552.PandaBot.CommandProcessor;
 import io.github.redpanda4552.PandaBot.PandaBot;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class CommandHelp extends AbstractCommand {
 

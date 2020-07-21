@@ -26,7 +26,7 @@ package io.github.redpanda4552.PandaBot;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 public class LogBuffer {
 

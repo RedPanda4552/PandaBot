@@ -31,7 +31,7 @@ import io.github.redpanda4552.PandaBot.util.LogFormatter;
 public class Main {
 
     private static final Logger log = Logger.getLogger(PandaBot.class.getName());
-    private static String discordToken, superuserId, youtubeAPIKey;
+    private static String discordToken, superuserId;
     
     protected static PandaBot pandaBot;
     
@@ -43,18 +43,16 @@ public class Main {
         log.addHandler(consoleHandler);
         
         if (args.length < 2) {
-            log.info("Usage: java -jar PandaBot-x.y.z.jar <discord-bot-token> <discord-user-id> <youtube-api-key>");
-            log.info("More information available at https://github.com/redpanda4552/PandaBot/");
+            log.info("Usage: java -jar PandaBot-x.y.z.jar <discord-bot-token> <discord-user-id>");
             return;
         }
         
         discordToken = args[0];
         superuserId = args[1];
-        youtubeAPIKey = args.length >= 3 ? args[2] : null;
         reinstance();
     }
     
     protected static void reinstance() {
-        pandaBot = new PandaBot(log, discordToken, superuserId, youtubeAPIKey);
+        pandaBot = new PandaBot(log, discordToken, superuserId);
     }
 }

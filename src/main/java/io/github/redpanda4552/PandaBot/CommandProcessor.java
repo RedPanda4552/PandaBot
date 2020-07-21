@@ -28,18 +28,26 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import io.github.redpanda4552.PandaBot.commands.*;
+import io.github.redpanda4552.PandaBot.commands.AbstractCommand;
 import io.github.redpanda4552.PandaBot.commands.AbstractCommand.CommandType;
-import io.github.redpanda4552.PandaBot.commands.general.*;
-import io.github.redpanda4552.PandaBot.commands.music.*;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import io.github.redpanda4552.PandaBot.commands.CommandReload;
+import io.github.redpanda4552.PandaBot.commands.CommandShutdown;
+import io.github.redpanda4552.PandaBot.commands.general.CommandEcho;
+import io.github.redpanda4552.PandaBot.commands.general.CommandF;
+import io.github.redpanda4552.PandaBot.commands.general.CommandHelp;
+import io.github.redpanda4552.PandaBot.commands.general.CommandLmgtfy;
+import io.github.redpanda4552.PandaBot.commands.general.CommandLogdump;
+import io.github.redpanda4552.PandaBot.commands.general.CommandMetrics;
+import io.github.redpanda4552.PandaBot.commands.general.CommandNSFW;
+import io.github.redpanda4552.PandaBot.commands.general.CommandPing;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class CommandProcessor {
 
-    public static final String PREFIX = "!";
+    public static final String PREFIX = ">";
     
     private PandaBot pandaBot;
     private HashMap<String, AbstractCommand> commandMap;
@@ -56,19 +64,6 @@ public class CommandProcessor {
         commandMap.put("ping", new CommandPing(pandaBot, this));
         commandMap.put("metrics", new CommandMetrics(pandaBot, this));
         commandMap.put("logdump", new CommandLogdump(pandaBot, this));
-        commandMap.put("report", new CommandReport(pandaBot, this));
-        // Music
-        commandMap.put("play", new CommandPlay(pandaBot, this));
-        commandMap.put("replay", new CommandReplay(pandaBot, this));
-        commandMap.put("pause", new CommandPause(pandaBot, this));
-        commandMap.put("skip", new CommandSkip(pandaBot, this));
-        commandMap.put("stop", new CommandStop(pandaBot, this));
-        commandMap.put("nowplaying", new CommandNowplaying(pandaBot, this));
-        commandMap.put("queue", new CommandQueue(pandaBot, this));
-        commandMap.put("join", new CommandJoin(pandaBot, this));
-        commandMap.put("leave", new CommandLeave(pandaBot, this));
-        commandMap.put("save", new CommandSave(pandaBot, this));
-        commandMap.put("load", new CommandLoad(pandaBot, this));
         // Super
         commandMap.put("reload", new CommandReload(pandaBot, this));
         commandMap.put("shutdown", new CommandShutdown(pandaBot, this));

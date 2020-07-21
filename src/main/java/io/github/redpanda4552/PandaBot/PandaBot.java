@@ -23,32 +23,18 @@
  */
 package io.github.redpanda4552.PandaBot;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
-import com.mashape.unirest.http.Unirest;
-
-import io.github.redpanda4552.PandaBot.player.GlobalAudioController;
-import io.github.redpanda4552.PandaBot.player.SelectionTracker;
-import io.github.redpanda4552.PandaBot.player.ServerAudioController;
-import io.github.redpanda4552.PandaBot.player.YoutubeAPI;
-import io.github.redpanda4552.PandaBot.reporting.GlobalReportManager;
-import io.github.redpanda4552.PandaBot.sql.AbstractAdapter;
-import io.github.redpanda4552.PandaBot.sql.AdapterSQLite;
-import io.github.redpanda4552.PandaBot.sql.TableIndex;
 import io.github.redpanda4552.PandaBot.util.RunningState;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class PandaBot {
 
@@ -63,26 +49,20 @@ public class PandaBot {
     
     private JDA jda;
     private CommandProcessor commandProcessor;
-    private GlobalAudioController gac;
-    private SelectionTracker st;
-    private GlobalReportManager grm;
-    private AbstractAdapter sql;
     
-    public PandaBot(Logger log, String token, String superuserId, String youtubeApiKey) {
+    public PandaBot(Logger log, String token, String superuserId) {
         startTime = System.currentTimeMillis();
         self = this;
         this.superuserId = superuserId;
-        init(token, youtubeApiKey);
+        init(token);
     }
     
     /**
-     * All the initialization goodness. Creates the {@link CommandProcessor},
-     * {@link JDA} and {@link GlobalAudioController}.
+     * All the initialization goodness. Creates the {@link CommandProcessor} and
+     * {@link JDA}
      * @param token - Discord bot token to use for JDA.
-     * @param youtubeApiKey - Youtube API Key to use for video searches and info
      */
-    private void init(String token, String youtubeApiKey) {
-        st = new SelectionTracker(); // Required by the play command
+    private void init(String token ) {
         commandProcessor = new CommandProcessor(this);
         
         if (token == null || token.isEmpty()) {
@@ -91,28 +71,15 @@ public class PandaBot {
         }
         
         try {
-            jda = new JDABuilder(AccountType.BOT)
-                    .setToken(token)
+            jda = JDABuilder.createDefault(token)
                     .setAutoReconnect(true)
-                    .addEventListener(new EventListener(this, commandProcessor))
+                    .addEventListeners(new EventListener(this, commandProcessor))
                     .build().awaitReady();
         } catch (LoginException | IllegalArgumentException | InterruptedException e) {
             LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
             return;
         }
         
-        updateRunningState(RunningState.INIT);
-        sql = new AdapterSQLite(this, "./pandabot.db");
-        sql.openConnection();
-        sql.processTable(TableIndex.MUSIC);
-        YoutubeAPI.setAPIKey(youtubeApiKey);
-        gac = new GlobalAudioController(this);
-
-        for (Guild guild : jda.getGuilds()) {
-            gac.createServerAudioController(guild);
-        }
-        
-        grm = new GlobalReportManager(jda.getGuilds());
         updateRunningState(RunningState.READY);
         LogBuffer.sysInfo("PandaBot and JDA online and ready!");
     }
@@ -126,7 +93,7 @@ public class PandaBot {
         LogBuffer.sysInfo("Stopping...");
         updateRunningState(RunningState.STOPPING);
         
-        while (jda.getPresence().getGame().getName() != RunningState.STOPPING.getStatusMessage()) {
+        while (jda.getPresence().getActivity().getName() != RunningState.STOPPING.getStatusMessage()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -134,15 +101,6 @@ public class PandaBot {
             }
         } 
         
-        try {
-            Unirest.shutdown();
-        } catch (IOException e) {
-            LogBuffer.sysWarn(e.getMessage(), e.getStackTrace());
-        }
-        
-        st.dropAll();
-        getGlobalAudioController().killAll();
-        sql.closeConnection();
         jda.shutdown();
         
         if (reload) {
@@ -150,7 +108,6 @@ public class PandaBot {
         } else {
             System.exit(0);
         }
-            
     }
     
     /**
@@ -158,7 +115,7 @@ public class PandaBot {
      */
     private void updateRunningState(RunningState runningState) {
         if (jda != null)
-            jda.getPresence().setGame(Game.listening(runningState.getStatusMessage()));
+            jda.getPresence().setActivity(Activity.watching(runningState.getStatusMessage()));
     }
     
     /**
@@ -207,31 +164,11 @@ public class PandaBot {
     }
     
     /**
-     * Attempt to join a {@link VoiceChannel}.
-     */
-    public void joinVoiceChannel(Guild guild, VoiceChannel vc) {
-        if (guild.getAudioManager().getConnectedChannel() == vc)
-            return;
-        if (guild.getAudioManager().isAttemptingToConnect())
-            return;
-        guild.getAudioManager().openAudioConnection(vc);
-    }
-    
-    /**
-     * Attempt to leave a {@link VoiceChannel}.
-     */
-    public void leaveVoiceChannel(Guild guild) {
-        if (guild.getAudioManager().isConnected()) {
-            guild.getAudioManager().closeAudioConnection();
-        }
-    }
-    
-    /**
      * Get PandaBot's own user ID
      */
     public String getBotId() {
         return jda.getSelfUser().getId();
-    }
+    }   
     
     public long getRunningTime() {
         return System.currentTimeMillis() - startTime;
@@ -249,33 +186,7 @@ public class PandaBot {
         return jda.getTextChannels().size();
     }
     
-    public int getVoiceChannelPlayingCount() {
-        int ret = 0;
-        
-        for (ServerAudioController sac : getGlobalAudioController().getAllServerAudioControllers())
-            if (sac.getAudioPlayer().getPlayingTrack() != null)
-                ret++;
-        
-        return ret;
-    }
-    
     public CommandProcessor getCommandProcessor() {
         return commandProcessor;
-    }
-    
-    public GlobalAudioController getGlobalAudioController() {
-        return gac;
-    }
-    
-    public SelectionTracker getSelectionTracker() {
-        return st;
-    }
-    
-    public GlobalReportManager getGlobalReportManager() {
-        return grm;
-    }
-    
-    public AbstractAdapter getSQL() {
-        return sql;
     }
 }

@@ -25,9 +25,9 @@ package io.github.redpanda4552.PandaBot.commands;
 
 import io.github.redpanda4552.PandaBot.CommandProcessor;
 import io.github.redpanda4552.PandaBot.PandaBot;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 public class CommandShutdown extends AbstractCommand {
 

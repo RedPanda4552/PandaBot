@@ -25,9 +25,9 @@ package io.github.redpanda4552.PandaBot.util;
 
 import java.util.List;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class MessageArchiver {
 
@@ -42,7 +42,7 @@ public class MessageArchiver {
         TextChannel archiveChannel;
         
         if (channels.isEmpty()) {
-            archiveChannel = (TextChannel) guild.getController().createTextChannel(CHANNEL_NAME).complete();
+            archiveChannel = (TextChannel) guild.createTextChannel(CHANNEL_NAME).complete();
         } else {
             archiveChannel = channels.get(0);
         }
